@@ -1,0 +1,49 @@
+//
+//  IconStyleCollectionViewCell.swift
+//  Apartment
+//
+//  Created by mac on 2020/6/15.
+//  Copyright © 2020 Fd. All rights reserved.
+//
+
+import UIKit
+
+open class IconStyleCollectionViewCell: HLCollectionViewCell {
+
+    public let iconImageView = UIImageView().then { (imageView) in
+        imageView.contentMode = .scaleAspectFit
+    }
+
+    public let titleLabel = UILabel().then { (label) in
+        label.font = .pingfang(ofSize: 15)
+        label.textColor = .black
+        label.textAlignment = .center
+    }
+
+    open override func initConfig() {
+        super.initConfig()
+
+        addSubview(iconImageView)
+        iconImageView.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview().inset(UIEdgeInsets(top: 5, left: 10, bottom: 30, right: 10))
+        }
+
+        addSubview(titleLabel)
+        titleLabel.snp.makeConstraints { (make) in
+            make.left.right.equalTo(iconImageView)
+            make.top.equalTo(iconImageView.snp.bottom).offset(5)
+            make.bottom.equalTo(-5)
+        }
+    }
+
+    open override func updateData() {
+        if let config = data as? TextCellConfig {
+
+            iconImageView.image = config.icon
+            titleLabel.text = config.text
+            titleLabel.textAlignment = config.textAlignment
+            titleLabel.textColor = config.textColor ?? .black
+            titleLabel.font = config.font ?? .pingfang(ofSize: 15)
+        }
+    }
+}
