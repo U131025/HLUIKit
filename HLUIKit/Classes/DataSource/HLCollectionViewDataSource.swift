@@ -12,7 +12,7 @@ import Foundation
 import RxDataSources
 
 extension String {
-    func toCollectionCell() -> HLCollectionViewCell? {
+    public func toCollectionCell() -> HLCollectionViewCell? {
 
         if let clsType = self.toClass() as? HLCollectionViewCell.Type {
             return clsType.init()
@@ -40,7 +40,9 @@ class HLCollectioViewDataSource {
                     print("Not HLCellType")
                 }
                 return cell
-        })
+            }, canMoveItemAtIndexPath:  { (datasoure, indexpath) -> Bool in
+                return true
+            })
     }
 
     static func generateDataSourceUIWithSection() -> (

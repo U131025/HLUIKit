@@ -116,7 +116,7 @@ open class HLTableView: HLView, UITableViewDelegate {
         addSubview(tableView)
         tableView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
-        }
+        }        
     }
 
     override open func bindConfig() {
@@ -163,7 +163,28 @@ open class HLTableView: HLView, UITableViewDelegate {
     func reloadData() {
         self.tableView.reloadData()
     }
-
+    
+    public func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        
+        if let view = view as? UITableViewHeaderFooterView {
+            if #available(iOS 14.0, *) {
+                view.backgroundConfiguration = UIBackgroundConfiguration.clear()
+            } else {
+                // Fallback on earlier versions
+            }
+        }
+    }
+    
+    public func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
+        if let view = view as? UITableViewHeaderFooterView {
+            if #available(iOS 14.0, *) {
+                view.backgroundConfiguration = UIBackgroundConfiguration.clear()
+            } else {
+                // Fallback on earlier versions
+            }
+        }
+    }
+        
     /// Cell 高度
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 

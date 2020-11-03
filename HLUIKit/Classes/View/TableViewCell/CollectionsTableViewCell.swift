@@ -32,7 +32,7 @@ open class HLCollectionsTableViewCell: HLTableViewCell {
     override open func initConfig() {
         super.initConfig()
 
-        addSubview(listView)
+        contentView.addSubview(listView)
         listView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
         }

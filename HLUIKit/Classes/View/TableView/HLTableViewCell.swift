@@ -50,6 +50,12 @@ open class HLTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         self.selectionStyle = .none
+        
+        if #available(iOS 14.0, *) {
+            self.backgroundConfiguration = UIBackgroundConfiguration.clear()
+        } else {
+            // Fallback on earlier versions
+        }
 
         initConfig()
         layoutConfig()

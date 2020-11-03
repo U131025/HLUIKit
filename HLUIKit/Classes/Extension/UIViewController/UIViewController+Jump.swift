@@ -65,4 +65,28 @@ extension UIViewController {
             self.pop()
         }
     }
+    
+    public func removeFromNav() {
+        guard let viewControllers = self.navigationController?.viewControllers else {
+            return
+        }
+        
+        for (index, vc) in viewControllers.enumerated() {
+            if vc.classForCoder == self.classForCoder {
+                self.navigationController?.viewControllers.remove(at: index)
+                break
+            }
+        }
+    }
+    
+//    public func removeViewcontrollers(_ aClass: AnyClass) {
+//
+//        guard let viewControllers = self.navigationController?.viewControllers else {
+//            return
+//        }
+//
+//
+//
+//
+//    }
 }

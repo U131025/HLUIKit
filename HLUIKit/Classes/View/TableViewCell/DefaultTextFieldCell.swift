@@ -166,7 +166,7 @@ open class DefaultTextFieldCell: HLTableViewCell {
 
     override open func layoutConfig() {
 
-        addSubview(textField)
+        contentView.addSubview(textField)
         textField.snp.makeConstraints { (make) in
             make.center.equalToSuperview()
             make.height.equalTo(45)
@@ -174,7 +174,7 @@ open class DefaultTextFieldCell: HLTableViewCell {
             make.right.equalTo(-15)
         }
 
-        addSubview(tipLabel)
+        contentView.addSubview(tipLabel)
         tipLabel.snp.makeConstraints { (make) in
             make.left.equalTo(15)
             make.right.equalTo(-15)
@@ -198,6 +198,10 @@ open class DefaultTextFieldCell: HLTableViewCell {
             textField.textAlignment = config.textAlignment
             textField.textColor = config.textColor
             textField.font = config.font
+            
+            if let offsetX = config.offsetX {
+                textField.textOffset = offsetX
+            }            
 
             if case .password = config.constraint {
                 textField.isSecureTextEntry = true
@@ -230,6 +234,14 @@ open class DefaultTextFieldCell: HLTableViewCell {
             } else {
                 textField.rightView = nil
                 textField.rightViewMode = .never
+            }
+            
+            if let icon = config.icon {
+                textField.leftView = UIImageView(image: icon)
+                textField.leftViewMode = .always
+            } else {
+                textField.leftView = nil
+                textField.leftViewMode = .never
             }
 
             if let tip = config.tip {

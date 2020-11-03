@@ -21,7 +21,7 @@ public enum HLTextFieldConstraint {
     case username
     case password
     case inviteCode
-    case dynamicCode
+    case dynamicCode(len: Int)
 
     case identify           // 身份证号
     case bankNumber         // 银行卡号
@@ -102,10 +102,11 @@ public enum HLTextFieldConstraint {
         case .password,
              .sellerPartnerAccount:
             return 20
-        case .inviteCode,
-             .dynamicCode:
+        case .inviteCode:
             return 6
-
+            
+        case .dynamicCode(let maxLen):
+            return maxLen
         case .bankNumber:
             return 40
         case .identify:
@@ -168,6 +169,8 @@ open class HLTextField: UITextField {
         self.delegate = self
         self.autocorrectionType = .no
         self.autocapitalizationType = .none
+        
+        self.bindConfig()
     }
 
     required public init?(coder aDecoder: NSCoder) {
@@ -321,14 +324,14 @@ open class HLTextField: UITextField {
     }
     open var textOffset: CGFloat = 0
     open override func textRect(forBounds bounds: CGRect) -> CGRect {
-        var rect = super.textRect(forBounds: bounds)
-        rect.origin.x += textOffset
-        return rect
+        let rect = super.textRect(forBounds: bounds)
+//        rect.origin.x += textOffset
+        return CGRect(x: rect.origin.x + textOffset, y: rect.origin.y, width: rect.size.width - textOffset, height: rect.size.height)
     }
     open override func editingRect(forBounds bounds: CGRect) -> CGRect {
-        var rect = super.textRect(forBounds: bounds)
-        rect.origin.x += textOffset
-        return rect
+        let rect = super.textRect(forBounds: bounds)
+//        rect.origin.x += textOffset
+        return CGRect(x: rect.origin.x + textOffset, y: rect.origin.y, width: rect.size.width - textOffset, height: rect.size.height)
     }
 
 }

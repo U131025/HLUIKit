@@ -91,7 +91,7 @@ open class HLCollectionView: HLView, UICollectionViewDelegateFlowLayout, UIColle
             })
             .takeUntil(self.rx.deallocated)
             .bind(to: collectionView.rx.items(dataSource: self.dataSource))
-
+        
 //        _ = collectionView.rx
 //            .modelSelected(RxBaseCellType.self)
 //            .takeUntil(self.rx.deallocated)
@@ -128,7 +128,9 @@ open class HLCollectionView: HLView, UICollectionViewDelegateFlowLayout, UIColle
 
         return CGSize.zero
     }
-
+    
+    
+    
     // MARK: UICollectionViewDelegate
 //    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
 //        return headerHeightInSectionBlock?(section) ?? CGSize(width: kScreenW, height: 0.001)

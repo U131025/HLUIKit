@@ -10,7 +10,7 @@ import Foundation
 import RxSwift
 import Moya
 import HandyJSON
-import BuglyHotfix
+//import BuglyHotfix
 
 class BaseModel: NSObject, HandyJSON {
     required override init() {}

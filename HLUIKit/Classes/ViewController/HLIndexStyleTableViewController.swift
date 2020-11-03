@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 import MYTableViewIndex
 
-open class RxIndexStyleTableViewController: HLTableViewController {
+open class HLIndexStyleTableViewController: HLTableViewController {
 
     /// 索引
     public var tableViewIndexController: TableViewIndexController!
@@ -49,7 +49,7 @@ open class RxIndexStyleTableViewController: HLTableViewController {
 
 }
 
-extension RxIndexStyleTableViewController: TableViewIndexDelegate {
+extension HLIndexStyleTableViewController: TableViewIndexDelegate {
 
     // MARK: - UIScrollView
 
