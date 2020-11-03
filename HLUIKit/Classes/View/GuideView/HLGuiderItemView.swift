@@ -54,7 +54,7 @@ open class HLGuiderItemView: HLView {
         }
     }
     
-    open func setConfig(_ config: GuiderConfig) -> Self {
+    open func setConfig(_ config: HLGuiderConfig) -> Self {
         imageView.image = config.image
         titleLabel.text = config.title
         subTitleLabel.text = config.subTitle

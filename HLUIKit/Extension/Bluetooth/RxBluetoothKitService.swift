@@ -11,6 +11,7 @@ import RxBluetoothKit
 import RxSwift
 import RxCocoa
 import CoreBluetooth
+import Then
 
 extension String {
     var uuid: CBUUID {

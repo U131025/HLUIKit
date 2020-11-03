@@ -3,6 +3,7 @@ platform :ios, '10.0'
 
 target 'HLUIKit_Example' do
   pod 'HLUIKit', :path => '../'
+  pod 'HLUIKit_Moya', :path => '../HLUIKit_Moya.podspec'
 
   target 'HLUIKit_Tests' do
     inherit! :search_paths

@@ -33,7 +33,7 @@ open class HLViewModel {
     public let pageSize: Int = 20
 
     public var disposeBag = DisposeBag()
-    public var disposabel: Disposable?
+    public var disposable: Disposable?
 
     /// 数据源
     public var items = BehaviorRelay<[SectionModel<String, HLCellType>]>(value: [])

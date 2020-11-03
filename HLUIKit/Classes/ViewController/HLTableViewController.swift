@@ -121,7 +121,7 @@ open class HLTableViewController: HLViewController, UITableViewDelegate {
 
         view.addSubview(emptyView)
         emptyView.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview()
+            make.edges.equalTo(listView)
         }
 
         guard let viewModel = viewModel else { return }

@@ -8,11 +8,16 @@
 // swiftlint:disable identifier_name
 
 import UIKit
+import RxGesture
+import RxSwift
+import RxCocoa
 
 open class HLPopView: HLView {
 
     open var isShow: Bool = false
-    open var topWindow: UIWindow?
+    open var topWindow: UIView?
+    
+    open var isClickBackgoundClose: Bool = false
 
     private var identify: String?
 
@@ -69,6 +74,20 @@ open class HLPopView: HLView {
         }
 
         guard let window = self.topWindow else { return }
+        
+        if isClickBackgoundClose == true {
+            let bgView = UIView()
+            bgView.backgroundColor = UIColor.init(hex: "101312", alpha: 0.3)
+            window.addSubview(bgView)
+            bgView.center = window.center
+            bgView.frame = window.bounds
+            
+            self.disposeBag = DisposeBag()
+            bgView.rx.tapGesture().when(.recognized)
+                .subscribe(onNext: {[unowned self] (_) in
+                    self.hide(animated: false)
+                }).disposed(by: disposeBag)
+        }
 
         window.addSubview(self)
         self.center = window.center

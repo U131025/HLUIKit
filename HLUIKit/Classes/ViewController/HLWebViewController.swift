@@ -55,7 +55,7 @@ open class HLWebViewController: HLViewController {
 
     open func loadRequest(url: URL) -> Self {
         let request = URLRequest(url: url)
-//        webView.loadRequest(request)
+        webView.load(request)
         return self
     }
 

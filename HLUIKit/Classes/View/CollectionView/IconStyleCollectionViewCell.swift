@@ -23,17 +23,19 @@ open class IconStyleCollectionViewCell: HLCollectionViewCell {
     open override func initConfig() {
         super.initConfig()
 
-        addSubview(iconImageView)
+        contentView.addSubview(iconImageView)
         iconImageView.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview().inset(UIEdgeInsets(top: 5, left: 10, bottom: 30, right: 10))
+//            make.edges.equalToSuperview().inset(UIEdgeInsets(top: 5, left: 10, bottom: 30, right: 10))
+            make.edges.equalToSuperview().inset(5)
         }
 
-        addSubview(titleLabel)
-        titleLabel.snp.makeConstraints { (make) in
-            make.left.right.equalTo(iconImageView)
-            make.top.equalTo(iconImageView.snp.bottom).offset(5)
-            make.bottom.equalTo(-5)
-        }
+        titleLabel.isHidden = true
+        contentView.addSubview(titleLabel)
+//        titleLabel.snp.makeConstraints { (make) in
+//            make.left.right.equalTo(iconImageView)
+//            make.top.equalTo(iconImageView.snp.bottom).offset(5)
+//            make.bottom.equalTo(-5)
+//        }
     }
 
     open override func updateData() {

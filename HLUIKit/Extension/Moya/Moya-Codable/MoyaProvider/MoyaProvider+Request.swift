@@ -11,6 +11,18 @@
 import Foundation
 import Moya
 
+public class MoyaPlugsConfig {
+    public static let shared = MoyaPlugsConfig()
+    public var plugins = [PluginType]()
+    
+    public init() {
+    }
+    
+    public func reload() {
+        ApiProvider = MoyaProvider<MultiTarget>(requestClosure: timeoutClosure, plugins: plugins)
+    }
+}
+
 let timeoutClosure = {(endpoint: Endpoint, closure: MoyaProvider<MultiTarget>.RequestResultClosure) -> Void in
     if var urlRequest = try? endpoint.urlRequest() {
         urlRequest.timeoutInterval = 15
@@ -20,5 +32,6 @@ let timeoutClosure = {(endpoint: Endpoint, closure: MoyaProvider<MultiTarget>.Re
     }
 }
 
-public let ApiProvider = MoyaProvider<MultiTarget>(requestClosure: timeoutClosure)
+public var ApiProvider = MoyaProvider<MultiTarget>(requestClosure: timeoutClosure, plugins: MoyaPlugsConfig.shared.plugins)
+
 //public let ApiProvider = MoyaProvider<MultiTarget>(requestClosure: timeoutClosure, plugins: [LogPlugin(), ErrorCodePlugin()])

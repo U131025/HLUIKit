@@ -7,7 +7,7 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'HLUIKit'
+  s.name             = 'HLUIKit_Bluetooth'
   s.version          = '1.0.0'
   s.summary          = 'HLUIKit蓝牙库'
 
@@ -34,4 +34,8 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.dependency 'RxBluetoothKit'
+  s.dependency 'RxSwift'
+  s.dependency 'RxCocoa'
+  s.dependency 'Then'
+
 end

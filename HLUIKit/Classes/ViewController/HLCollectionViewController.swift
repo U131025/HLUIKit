@@ -11,7 +11,7 @@ import RxDataSources
 import RxSwift
 import RxCocoa
 
-open class RxBaseCollectionViewController: HLViewController {
+open class HLCollectionViewController: HLViewController {
 
     lazy public var listView = HLCollectionView()
         .setFlowLayout(config: {[unowned self] () -> (UICollectionViewFlowLayout?) in
@@ -130,7 +130,7 @@ open class RxBaseCollectionViewController: HLViewController {
     }
 }
 
-extension RxBaseCollectionViewController {
+extension HLCollectionViewController {
 
     public func setItems(_ datas: [HLCellType]) -> Self {
         _ = listView.setItems(datas)

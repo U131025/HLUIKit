@@ -25,7 +25,7 @@ public let defaultHUDShowTime: TimeInterval = 2
 public typealias CompleteBlock = () -> Void
 
 public protocol Wireframe {
-    func open(url: URL)
+    func open(url: URL?) -> Bool
     func promptFor<Action: CustomStringConvertible>(_ title: String, _ message: String, cancelAction: Action, actions: [Action]) -> Observable<Action>
 }
 
@@ -33,8 +33,18 @@ open class DefaultWireframe: NSObject, Wireframe {
     static public let shared = DefaultWireframe()
     public let juhua = JGProgressHUD.init(style: .dark)
     public var disposeBag = DisposeBag()
+    
+    public func open(urls: [URL?]) {
+        for url in urls {
+            if open(url: url) == true {
+                break
+            }
+        }
+    }
 
-    public func open(url: URL) {
+    public func open(url: URL?) -> Bool {
+        
+        guard let url = url else { return false }
 
         if UIApplication.shared.canOpenURL(url) {
             if #available(iOS 10.0, *) {
@@ -52,9 +62,10 @@ open class DefaultWireframe: NSObject, Wireframe {
             } else {
                 // Fallback on earlier versions
             }
-            return
+            return true
         } else {
-            showErrorJuhua(message: localizedString("无法打开\(url.absoluteString)"))
+//            showErrorJuhua(message: localizedString("无法打开\(url.absoluteString)"))
+            return false
         }
     }
 

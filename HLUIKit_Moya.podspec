@@ -7,7 +7,7 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'HLUIKit'
+  s.name             = 'HLUIKit_Moya'
   s.version          = '1.0.0'
   s.summary          = '基于RxSwift的界面库'
 
@@ -38,5 +38,7 @@ HLUIKit网络库
   s.dependency 'Alamofire'
   s.dependency 'HandyJSON'
   s.dependency 'RxSwift'
+  s.dependency 'Cache'
+  s.dependency 'Result'
 
 end

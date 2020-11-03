@@ -27,7 +27,7 @@ open class HLAttrStringTextCell: HLTableViewCell {
     }
     override open func initConfig() {
         super.initConfig()
-        addSubview(label)
+        contentView.addSubview(label)
         label.snp.makeConstraints { (make) in
             make.left.equalTo(15)
             make.right.equalTo(-15)
