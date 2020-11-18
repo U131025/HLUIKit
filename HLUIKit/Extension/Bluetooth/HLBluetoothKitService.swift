@@ -14,19 +14,19 @@ import CoreBluetooth
 import Then
 
 extension String {
-    var uuid: CBUUID {
+    public var uuid: CBUUID {
         return CBUUID(string: self)
     }
 }
 
-class PeripheralCharacteristicConfig: NSObject {
-    var writeChrUUIDStr: String?
-    var readChrUUIDStr: String?
-    var notifyChrUUIDStr: String?
-    var writeChr: Characteristic?
-    var readChr: Characteristic?
-    var notifyChr: Characteristic?
-    func addCharacteristic(_ chr: Characteristic?) {
+public class HLPeripheralCharacteristicConfig: NSObject {
+    public var writeChrUUIDStr: String?
+    public var readChrUUIDStr: String?
+    public var notifyChrUUIDStr: String?
+    public var writeChr: Characteristic?
+    public var readChr: Characteristic?
+    public var notifyChr: Characteristic?
+    public func addCharacteristic(_ chr: Characteristic?) {
 
         guard let chr = chr else { return }
         if chr.uuid.uuidString.uppercased() == writeChrUUIDStr?.uppercased() {
@@ -40,7 +40,7 @@ class PeripheralCharacteristicConfig: NSObject {
         }
     }
 
-    func isNotifyChr(_ chr: Characteristic?) -> Bool {
+    public func isNotifyChr(_ chr: Characteristic?) -> Bool {
         guard let chr = chr else { return false }
         if chr.uuid.uuidString.uppercased() == notifyChrUUIDStr?.uppercased() {
             return true
@@ -49,47 +49,47 @@ class PeripheralCharacteristicConfig: NSObject {
     }
 }
 
-class RxBluetoothKitService {
+public class HLBluetoothKitService {
 
-    static let shared = RxBluetoothKitService()
+    public static let shared = HLBluetoothKitService()
 
     //发送线程
     private let sendQueue = OperationQueue().then { (queue) in
         queue.maxConcurrentOperationCount = 1
     }
 
-    typealias Disconnection = (Peripheral, DisconnectionReason?)
+    public typealias Disconnection = (Peripheral, DisconnectionReason?)
 
-    var peripheralsDic = [String: ScannedPeripheral]()
-    var autoDisposeBag = DisposeBag()
+    public var peripheralsDic = [String: ScannedPeripheral]()
+    public var autoDisposeBag = DisposeBag()
 
     // MARK: - Public outputs
-    var scanningOutput: Observable<ScannedPeripheral> {
+    public var scanningOutput: Observable<ScannedPeripheral> {
         return scanningSubject.share(replay: 1, scope: .forever).asObservable()
     }
 
-    var connectionResultOutput: Observable<RxBluetoothResult<Peripheral, Error>> {
+    public var connectionResultOutput: Observable<HLBluetoothResult<Peripheral, Error>> {
         return connectionResultSubject.asObservable()
     }
 
-    var disconnectionReasonOutput: Observable<RxBluetoothResult<Disconnection, Error>> {
+    public var disconnectionReasonOutput: Observable<HLBluetoothResult<Disconnection, Error>> {
         return disconnectionSubject.asObservable()
     }
 
-    var discoveredCharacteristicsOutput: Observable<Characteristic> {
+    public var discoveredCharacteristicsOutput: Observable<Characteristic> {
         return discoveredCharacteristicsSubject.asObservable()
     }
 
-    var readValueOutput: Observable<RxBluetoothResult<Characteristic, Error>> {
+    public var readValueOutput: Observable<HLBluetoothResult<Characteristic, Error>> {
         return readValueSubject.asObservable()
     }
 
-    var writeValueOutput: Observable<RxBluetoothResult<Characteristic, Error>> {
+    public var writeValueOutput: Observable<HLBluetoothResult<Characteristic, Error>> {
         return writeValueSubject.asObservable()
     }
 
     // 通知输出
-    var updatedValueAndNotificationOutput: Observable<RxBluetoothResult<Characteristic, Error>> {
+    public var updatedValueAndNotificationOutput: Observable<HLBluetoothResult<Characteristic, Error>> {
         return updatedValueAndNotificationSubject.asObservable()
     }
 
@@ -98,15 +98,15 @@ class RxBluetoothKitService {
 
     private let scanningSubject = PublishSubject<ScannedPeripheral>()
 
-    private let connectionResultSubject = PublishSubject<RxBluetoothResult<Peripheral, Error>>()
+    private let connectionResultSubject = PublishSubject<HLBluetoothResult<Peripheral, Error>>()
 
-    private let disconnectionSubject = PublishSubject<RxBluetoothResult<Disconnection, Error>>()
+    private let disconnectionSubject = PublishSubject<HLBluetoothResult<Disconnection, Error>>()
 
-    private let readValueSubject = PublishSubject<RxBluetoothResult<Characteristic, Error>>()
+    private let readValueSubject = PublishSubject<HLBluetoothResult<Characteristic, Error>>()
 
-    private let writeValueSubject = PublishSubject<RxBluetoothResult<Characteristic, Error>>()
+    private let writeValueSubject = PublishSubject<HLBluetoothResult<Characteristic, Error>>()
 
-    private let updatedValueAndNotificationSubject = PublishSubject<RxBluetoothResult<Characteristic, Error>>()
+    private let updatedValueAndNotificationSubject = PublishSubject<HLBluetoothResult<Characteristic, Error>>()
 
     // MARK: - Private fields
 
@@ -124,15 +124,15 @@ class RxBluetoothKitService {
 
     private var notificationDisposables: [Characteristic: Disposable] = [:]
 
-    private var peripheralCharacteristics: [Peripheral: PeripheralCharacteristicConfig] = [:]
+    private var peripheralCharacteristics: [Peripheral: HLPeripheralCharacteristicConfig] = [:]
 
     // MARK: - Initialization
-    init() {
-        let timerQueue = DispatchQueue(label: Constant.Strings.defaultDispatchQueueLabel)
+    public init() {
+        let timerQueue = DispatchQueue(label: "com.polidea.rxbluetoothkit.timer")
         scheduler = ConcurrentDispatchQueueScheduler(queue: timerQueue)
     }
     // MARK: 扫描
-    func startScan(serviceUUIDs: [CBUUID]? = nil) -> Observable<ScannedPeripheral> {
+    public func startScan(serviceUUIDs: [CBUUID]? = nil) -> Observable<ScannedPeripheral> {
 
         peripheralsDic.removeAll()
         stopScanning()
@@ -166,17 +166,17 @@ class RxBluetoothKitService {
         return scanningOutput
     }
 
-    func stopScanning() {
+    public func stopScanning() {
         scanningDisposable?.dispose()
     }
 
     // MARK: 连接
-    func connect(for peripheral: Peripheral, serviceUUIDs: [CBUUID]? = nil, characteristicConfig: PeripheralCharacteristicConfig? = nil) -> Self {
+    public func connect(for peripheral: Peripheral, serviceUUIDs: [CBUUID]? = nil, characteristicConfig: HLPeripheralCharacteristicConfig? = nil) -> Self {
 
         let isConnected = peripheral.isConnected
         if isConnected == true {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {[weak self] in
-                self?.connectionResultSubject.onNext(RxBluetoothResult.success(peripheral))
+                self?.connectionResultSubject.onNext(HLBluetoothResult.success(peripheral))
             }
             return self
         }
@@ -188,9 +188,9 @@ class RxBluetoothKitService {
                 self?.observeDisconnect(for: peripheral)
 
                 if peripheral.isConnected {
-                    self?.connectionResultSubject.onNext(RxBluetoothResult.success(peripheral))
+                    self?.connectionResultSubject.onNext(HLBluetoothResult.success(peripheral))
                 } else {
-                    self?.connectionResultSubject.onNext(RxBluetoothResult.error(RxError.noElements))
+                    self?.connectionResultSubject.onNext(HLBluetoothResult.error(RxError.noElements))
                 }
             })
             .flatMap { $0.discoverServices(serviceUUIDs) }
@@ -240,7 +240,7 @@ class RxBluetoothKitService {
         return self
     }
 
-    func disconnect(_ peripheral: Peripheral) {
+    public func disconnect(_ peripheral: Peripheral) {
         guard let disposable = peripheralConnections[peripheral] else {
             return
         }
@@ -249,7 +249,7 @@ class RxBluetoothKitService {
         peripheralCharacteristics[peripheral] = nil
     }
 
-    func autoConnected(_ peripheral: Peripheral) {
+    public func autoConnected(_ peripheral: Peripheral) {
 
         disconnectionSubject
             .subscribe(onNext: {[weak self] (result) in
@@ -273,24 +273,24 @@ class RxBluetoothKitService {
     // 监听断开连接状态
     private func observeDisconnect(for peripheral: Peripheral) {
         centralManager.observeDisconnect(for: peripheral).subscribe(onNext: { [unowned self] (peripheral, reason) in
-            self.disconnectionSubject.onNext(RxBluetoothResult.success((peripheral, reason)))
+            self.disconnectionSubject.onNext(HLBluetoothResult.success((peripheral, reason)))
             self.disconnect(peripheral)
         }, onError: { [unowned self] error in
-            self.disconnectionSubject.onNext(RxBluetoothResult.error(error))
+            self.disconnectionSubject.onNext(HLBluetoothResult.error(error))
         }).disposed(by: disposeBag)
     }
 
     //
     // MARK: - Reading from and writing to a characteristic
-    func readValueFrom(_ characteristic: Characteristic) {
+    public func readValueFrom(_ characteristic: Characteristic) {
         characteristic.readValue().subscribe(onSuccess: { [unowned self] characteristic in
-            self.readValueSubject.onNext(RxBluetoothResult.success(characteristic))
+            self.readValueSubject.onNext(HLBluetoothResult.success(characteristic))
         }, onError: { [unowned self] error in
-            self.readValueSubject.onNext(RxBluetoothResult.error(error))
+            self.readValueSubject.onNext(HLBluetoothResult.error(error))
         }).disposed(by: disposeBag)
     }
 
-    func writeValueTo(characteristic: Characteristic, data: Data) {
+    public func writeValueTo(characteristic: Characteristic, data: Data) {
         guard let writeType = characteristic.determineWriteType() else {
             return
         }
@@ -298,10 +298,10 @@ class RxBluetoothKitService {
         characteristic
             .writeValue(data, type: writeType)
             .subscribe(onSuccess: { [unowned self] characteristic in
-                self.writeValueSubject.onNext(RxBluetoothResult.success(characteristic))
+                self.writeValueSubject.onNext(HLBluetoothResult.success(characteristic))
 
                 }, onError: { [unowned self] error in
-                    self.writeValueSubject.onNext(RxBluetoothResult.error(error))
+                    self.writeValueSubject.onNext(HLBluetoothResult.error(error))
 
             }).disposed(by: disposeBag)
     }
@@ -310,48 +310,48 @@ class RxBluetoothKitService {
 
     // observeValueUpdateAndSetNotification(:_) returns a disposable from subscription, which triggers notifying start
     // on a selected characteristic.
-    func observeValueUpdateAndSetNotification(for characteristic: Characteristic) {
+    public func observeValueUpdateAndSetNotification(for characteristic: Characteristic) {
         if notificationDisposables[characteristic] != nil {
-            self.updatedValueAndNotificationSubject.onNext(RxBluetoothResult.error(RxBluetoothServiceError.redundantStateChange))
+            self.updatedValueAndNotificationSubject.onNext(HLBluetoothResult.error(RxBluetoothServiceError.redundantStateChange))
         } else {
             let disposable = characteristic.observeValueUpdateAndSetNotification()
             .subscribe(onNext: { [weak self] (characteristic) in
                 print("\n===== 🚖 ble respond data: \(String(describing: characteristic.value))")
-                self?.updatedValueAndNotificationSubject.onNext(RxBluetoothResult.success(characteristic))
+                self?.updatedValueAndNotificationSubject.onNext(HLBluetoothResult.success(characteristic))
             }, onError: { [weak self] (error) in
-                self?.updatedValueAndNotificationSubject.onNext(RxBluetoothResult.error(error))
+                self?.updatedValueAndNotificationSubject.onNext(HLBluetoothResult.error(error))
             })
 
             notificationDisposables[characteristic] = disposable
         }
     }
 
-    func disposeNotification(for characteristic: Characteristic) {
+    public func disposeNotification(for characteristic: Characteristic) {
         if let disposable = notificationDisposables[characteristic] {
             disposable.dispose()
             notificationDisposables[characteristic] = nil
         } else {
-            self.updatedValueAndNotificationSubject.onNext(RxBluetoothResult.error(RxBluetoothServiceError.redundantStateChange))
+            self.updatedValueAndNotificationSubject.onNext(HLBluetoothResult.error(RxBluetoothServiceError.redundantStateChange))
         }
     }
 
     // observeNotifyValue tells us when exactly a characteristic has changed it's state (e.g isNotifying).
     // We need to use this method, because hardware needs an amount of time to switch characteristic's state.
-    func observeNotifyValue(peripheral: Peripheral, characteristic: Characteristic) {
+    public func observeNotifyValue(peripheral: Peripheral, characteristic: Characteristic) {
         peripheral.observeNotifyValue(for: characteristic)
         .subscribe(onNext: { [unowned self] (characteristic) in
-            self.updatedValueAndNotificationSubject.onNext(RxBluetoothResult.success(characteristic))
+            self.updatedValueAndNotificationSubject.onNext(HLBluetoothResult.success(characteristic))
         }, onError: { [unowned self] (error) in
-            self.updatedValueAndNotificationSubject.onNext(RxBluetoothResult.error(error))
+            self.updatedValueAndNotificationSubject.onNext(HLBluetoothResult.error(error))
         }).disposed(by: disposeBag)
     }
 
 }
 
-extension RxBluetoothKitService {
+extension HLBluetoothKitService {
 
     // 发送数据
-    func send(data: Data, for peripheral: Peripheral) -> Self {
+    public func send(data: Data, for peripheral: Peripheral) -> Self {
 
         guard let config = peripheralCharacteristics[peripheral], let chr = config.writeChr else {
             return self
@@ -362,7 +362,7 @@ extension RxBluetoothKitService {
         return self
     }
     // 批量发送
-    func send(datas: [Data], for peripheral: Peripheral) -> Self {
+    public func send(datas: [Data], for peripheral: Peripheral) -> Self {
 
         guard let config = peripheralCharacteristics[peripheral], let chr = config.writeChr else {
             return self
@@ -381,6 +381,6 @@ extension RxBluetoothKitService {
 
 }
 
-enum RxBluetoothServiceError: Error {
+public enum RxBluetoothServiceError: Error {
     case redundantStateChange
 }
