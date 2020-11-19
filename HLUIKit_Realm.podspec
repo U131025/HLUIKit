@@ -34,5 +34,7 @@ HLUIKit Realm数据库封装
   s.requires_arc = true
 
   s.dependency 'RealmSwift'
+  s.dependency 'RxSwift'
+  s.dependency 'RxCocoa'
 
 end
