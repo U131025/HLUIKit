@@ -16,6 +16,7 @@ extension UIImage {
 
 public class HLImageHelper: NSObject {
 
+
     //图片压缩 1000kb以下的图片控制在100kb-200kb之间
     public class func compressImageSize(image: UIImage, maxSize: Int = 1024 * 3) -> Data? {
         
@@ -44,18 +45,19 @@ public class HLImageHelper: NSObject {
     }
     
     public class func resizeImage(originalImg: UIImage) -> UIImage {
-        
+
         //prepare constants
         let width = originalImg.size.width
         let height = originalImg.size.height
         let scale = width/height
         
         var sizeChange = CGSize()
-        
+
+
         if width <= 1280 && height <= 1280 { //a，图片宽或者高均小于或等于1280时图片尺寸保持不变，不改变图片大小
             return originalImg
-        }else if width > 1280 || height > 1280 {//b,宽或者高大于1280，但是图片宽度高度比小于或等于2，则将图片宽或者高取大的等比压缩至1280
-            
+        } else if width > 1280 || height > 1280 {//b,宽或者高大于1280，但是图片宽度高度比小于或等于2，则将图片宽或者高取大的等比压缩至1280
+
             if scale <= 2 && scale >= 1 {
                 let changedWidth:CGFloat = 1280
                 let changedheight:CGFloat = changedWidth / scale
