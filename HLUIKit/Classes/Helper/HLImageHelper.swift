@@ -14,7 +14,11 @@ extension UIImage {
     }
 }
 
+<<<<<<< HEAD
 public class HLImageHelper: NSObject {
+=======
+class HLImageHelper: NSObject {
+>>>>>>> 83d7c7e9b960daa66bd1f4194a167b2047616736
 
     //图片压缩 1000kb以下的图片控制在100kb-200kb之间
     public class func compressImageSize(image: UIImage, maxSize: Int = 1024 * 3) -> Data? {
@@ -43,7 +47,11 @@ public class HLImageHelper: NSObject {
         return imageData
     }
     
+<<<<<<< HEAD
     public class func resizeImage(originalImg: UIImage) -> UIImage {
+=======
+    public class func resizeImage(originalImg:UIImage) -> UIImage{
+>>>>>>> 83d7c7e9b960daa66bd1f4194a167b2047616736
         
         //prepare constants
         let width = originalImg.size.width
@@ -52,7 +60,11 @@ public class HLImageHelper: NSObject {
         
         var sizeChange = CGSize()
         
+<<<<<<< HEAD
         if width <= 1280 && height <= 1280 { //a，图片宽或者高均小于或等于1280时图片尺寸保持不变，不改变图片大小
+=======
+        if width <= 1280 && height <= 1280{ //a，图片宽或者高均小于或等于1280时图片尺寸保持不变，不改变图片大小
+>>>>>>> 83d7c7e9b960daa66bd1f4194a167b2047616736
             return originalImg
         }else if width > 1280 || height > 1280 {//b,宽或者高大于1280，但是图片宽度高度比小于或等于2，则将图片宽或者高取大的等比压缩至1280
             
