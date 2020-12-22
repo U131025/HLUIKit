@@ -1,6 +1,6 @@
 import UIKit
 
-struct Constant {
+public struct Constant {
 
     struct Constraints {
         static let horizontalSmall: CGFloat = 8.0

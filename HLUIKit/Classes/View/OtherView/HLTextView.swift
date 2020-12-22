@@ -17,10 +17,10 @@ public class HLTextView: UITextView {
     open var expression = "[<>\"”“/]"
     open var maxTextCount: Int = 0  /// 备注内容的最大值
 
-    private let disposeBag = DisposeBag()
+    private var disposeBag = DisposeBag()
     let textSubject = PublishSubject<String>()
 
-    init() {
+    public init() {
         super.init(frame: CGRect.zero, textContainer: nil)
         bindConfig()
     }
@@ -53,30 +53,9 @@ public class HLTextView: UITextView {
     }
 
     func bindConfig() {
+        disposeBag = DisposeBag()
 
         self.delegate = self
-
-        self.rx.text.orEmpty.asObservable()
-            .distinctUntilChanged()
-            .subscribe(onNext: {[unowned self] _ in
-
-            let toBeString = self.text
-
-            let language = self.textInputMode?.primaryLanguage
-            if language == "zh-Hans" || language == "zh-Hant" {
-
-                guard let selectedRange = self.markedTextRange else {
-                    self.setText(self.getText(with: toBeString))
-                    return
-                }
-                guard self.position(from: selectedRange.start, offset: 0) != nil else {
-                    self.setText(self.getText(with: toBeString))
-                    return
-                }
-            } else {
-                self.setText(self.getText(with: toBeString))
-            }
-        }).disposed(by: disposeBag)
     }
 }
 
@@ -88,9 +67,38 @@ extension HLTextView: UITextViewDelegate {
         if primaryLanguage == "emoji" {
             return false
         }
-        if text.containsEmoji() {
-            return false
-        }
+
         return true
     }
+      
+    public func textViewDidChange(_ textView: UITextView) {
+        
+        let toBeString = textView.text
+
+        let language = textView.textInputMode?.primaryLanguage
+        if language == "zh-Hans" || language == "zh-Hant" {
+
+            guard let selectedRange = textView.markedTextRange else {
+                return
+            }
+                            
+            guard textView.position(from: selectedRange.start, offset: 0) != nil else {
+                self.setText(self.getText(with: toBeString))
+                return
+            }
+            
+//            let pos: Int = offset(from: self.beginningOfDocument, to: pt)
+//            if let zhText = toBeString?.substring(to: pos), zhText.count > maxTextCount {
+//                self.setText(self.getText(with: zhText))
+//                return
+//            }
+            
+        } else {
+            self.setText(self.getText(with: toBeString))
+        }
+    }
+    
+    public func textViewDidEndEditing(_ textView: UITextView) {
+        self.setText(self.getText(with: textView.text))
+    }    
 }

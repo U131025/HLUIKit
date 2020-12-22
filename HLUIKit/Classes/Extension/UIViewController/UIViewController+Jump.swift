@@ -54,7 +54,7 @@ extension UIViewController {
 
     public func present(_ viewController: UIViewController, animated: Bool = true) {
 
-        viewController.modalPresentationStyle = .fullScreen
+        viewController.modalPresentationStyle = .fullScreen        
         self.present(viewController, animated: true, completion: nil)
     }
 
@@ -65,4 +65,35 @@ extension UIViewController {
             self.pop()
         }
     }
+    
+    public var isPresentMode: Bool {
+        if self.presentingViewController != nil {
+            return true
+        }
+        return false
+    }
+    
+    public func removeFromNav() {
+        guard let viewControllers = self.navigationController?.viewControllers else {
+            return
+        }
+        
+        for (index, vc) in viewControllers.enumerated() {
+            if vc.classForCoder == self.classForCoder {
+                self.navigationController?.viewControllers.remove(at: index)
+                break
+            }
+        }
+    }
+    
+//    public func removeViewcontrollers(_ aClass: AnyClass) {
+//
+//        guard let viewControllers = self.navigationController?.viewControllers else {
+//            return
+//        }
+//
+//
+//
+//
+//    }
 }

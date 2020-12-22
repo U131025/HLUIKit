@@ -11,20 +11,20 @@ import RxDataSources
 import RxSwift
 import RxCocoa
 
-open class RxBaseCollectionViewController: HLViewController {
+open class HLCollectionViewController: HLViewController {
 
     lazy public var listView = HLCollectionView()
-        .setFlowLayout(config: {[unowned self] () -> (UICollectionViewFlowLayout?) in
-            return self.generateFlowLayout()
+        .setFlowLayout(config: {[weak self] () -> (UICollectionViewFlowLayout?) in
+            return self?.generateFlowLayout()
         })
-        .setCollectionViewConfig(config: {[unowned self] (collectionView) in
-            self.setCollectionViewConfig(collectionView)
+        .setCollectionViewConfig(config: {[weak self] (collectionView) in
+            self?.setCollectionViewConfig(collectionView)
         })
-        .setCellConfig(config: {[unowned self] (cell) in
-            self.cellControlBindConfig(cell)
+        .setCellConfig(config: {(cell, indexPath) in
+            self.cellControlBindConfig(cell, indexPath)
         })
-        .selectedAction(action: {[unowned self] (type) in
-            self.itemSelected(type)
+        .selectedAction(action: {[weak self] (type) in
+            self?.itemSelected(type)
         })
         .build()
 
@@ -74,7 +74,7 @@ open class RxBaseCollectionViewController: HLViewController {
     }
 
     /// cell内部控件绑定扩展
-    open func cellControlBindConfig(_ cell: HLCollectionViewCell) {
+    open func cellControlBindConfig(_ cell: HLCollectionViewCell, _ indexPath: IndexPath) {
 
     }
 
@@ -130,7 +130,7 @@ open class RxBaseCollectionViewController: HLViewController {
     }
 }
 
-extension RxBaseCollectionViewController {
+extension HLCollectionViewController {
 
     public func setItems(_ datas: [HLCellType]) -> Self {
         _ = listView.setItems(datas)

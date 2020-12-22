@@ -27,10 +27,10 @@ open class HLAttrStringTextCell: HLTableViewCell {
     }
     override open func initConfig() {
         super.initConfig()
-        addSubview(label)
+        contentView.addSubview(label)
         label.snp.makeConstraints { (make) in
-            make.left.equalTo(15)
-            make.right.equalTo(-15)
+            make.left.equalTo(HLTableViewCell.defaultCellMarginValue)
+            make.right.equalTo(-HLTableViewCell.defaultCellMarginValue)
             make.top.bottom.equalToSuperview()
         }
     }
@@ -61,22 +61,22 @@ open class HLAttrStringTextCell: HLTableViewCell {
 }
 
 extension HLAttrStringTextCell {
-    static public func calculateCellHeight(_ data: Any?, _ maxWidth: CGFloat = kScreenW - 30) -> CGFloat {
+    static public func calculateCellHeight(_ data: Any?, _ maxWidth: CGFloat = kScreenW - HLTableViewCell.defaultCellMarginValue*2, minHeight: CGFloat = 44, margin: CGFloat = 20) -> CGFloat {
         if let attrStr = data as? NSAttributedString {
-            return calculateAttrStringHeight(attrStr, maxWidth)
+            return calculateAttrStringHeight(attrStr, maxWidth, minHeight: minHeight, margin: margin)
         } else if let config = data as? TextCellConfig {
             if let attrStr = config.attributedText {
-                return calculateAttrStringHeight(attrStr, maxWidth)
+                return calculateAttrStringHeight(attrStr, maxWidth, minHeight: minHeight, margin: margin)
             }
-            return config.calculateTextHeight(maxWidth) + 20
+            return config.calculateTextHeight(maxWidth) + margin
         }
-        return 44
+        return minHeight
     }
 
-    static public func calculateAttrStringHeight(_ attrStr: NSAttributedString, _ maxWidth: CGFloat = kScreenW - 30) -> CGFloat {
+    static public func calculateAttrStringHeight(_ attrStr: NSAttributedString, _ maxWidth: CGFloat = kScreenW - HLTableViewCell.defaultCellMarginValue*2, minHeight: CGFloat = 44, margin: CGFloat = 20) -> CGFloat {
         let font: UIFont = attrStr.font ?? .pingfang(ofSize: 15)
         let size = (attrStr.string as NSString).boundingRect(with: CGSize(width: Int(maxWidth), height: Int.max), options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes: [NSAttributedString.Key.font: font], context: nil)
-        let hieght = size.height + 20
-        return hieght < 44 ? 44 : hieght
+        let hieght = size.height + margin
+        return hieght < minHeight ? minHeight : hieght
     }
 }

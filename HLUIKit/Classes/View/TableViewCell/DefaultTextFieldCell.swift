@@ -35,6 +35,14 @@ extension String {
 
         return lable.sizeThatFits(CGSize(width: maxWidth, height: CGFloat(MAXFLOAT))).height
     }
+    
+    public func calculateSize(_ font: UIFont?) -> CGSize {
+        let lable = UILabel.init()
+        lable.font = font ?? UIFont.systemFont(ofSize: 15)
+        lable.text = self
+        lable.sizeToFit()
+        return lable.frame.size
+    }
 }
 
 public class TextCellConfig: NSObject {
@@ -166,18 +174,18 @@ open class DefaultTextFieldCell: HLTableViewCell {
 
     override open func layoutConfig() {
 
-        addSubview(textField)
+        contentView.addSubview(textField)
         textField.snp.makeConstraints { (make) in
             make.center.equalToSuperview()
-            make.height.equalTo(45)
-            make.left.equalTo(15)
-            make.right.equalTo(-15)
+            make.height.equalTo(50)
+            make.left.equalTo(HLTableViewCell.defaultCellMarginValue)
+            make.right.equalTo(-HLTableViewCell.defaultCellMarginValue)
         }
 
-        addSubview(tipLabel)
+        contentView.addSubview(tipLabel)
         tipLabel.snp.makeConstraints { (make) in
-            make.left.equalTo(15)
-            make.right.equalTo(-15)
+            make.left.equalTo(HLTableViewCell.defaultCellMarginValue)
+            make.right.equalTo(-HLTableViewCell.defaultCellMarginValue)
             make.bottom.equalToSuperview()
             make.height.equalTo(15)
         }
@@ -198,6 +206,10 @@ open class DefaultTextFieldCell: HLTableViewCell {
             textField.textAlignment = config.textAlignment
             textField.textColor = config.textColor
             textField.font = config.font
+            
+            if let offsetX = config.offsetX {
+                textField.textOffset = offsetX
+            }            
 
             if case .password = config.constraint {
                 textField.isSecureTextEntry = true
@@ -230,6 +242,14 @@ open class DefaultTextFieldCell: HLTableViewCell {
             } else {
                 textField.rightView = nil
                 textField.rightViewMode = .never
+            }
+            
+            if let icon = config.icon {
+                textField.leftView = UIImageView(image: icon)
+                textField.leftViewMode = .always
+            } else {
+                textField.leftView = nil
+                textField.leftViewMode = .never
             }
 
             if let tip = config.tip {

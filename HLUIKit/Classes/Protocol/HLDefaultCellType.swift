@@ -20,7 +20,7 @@ public enum DefaultTableViewCellType {
     case collections(Any?, CGFloat)
 }
 
-extension DefaultTableViewCellType: HLCellType {    
+extension DefaultTableViewCellType: HLCellType {
     
     public var cellClass: AnyClass {
         switch self {
@@ -52,7 +52,7 @@ extension DefaultTableViewCellType: HLCellType {
         case .separator(_, let height):
             return height
         case .attrText(let text):
-            return HLAttrStringTextCell.calculateCellHeight(text, kScreenW - 60)
+            return HLAttrStringTextCell.calculateCellHeight(text, kScreenW - HLTableViewCell.defaultCellMarginValue*2)
         case .line(let config):
             return config.height
         case .horizontalList(_, let height):

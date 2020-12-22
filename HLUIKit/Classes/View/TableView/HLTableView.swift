@@ -24,6 +24,7 @@ public typealias HLTableViewViewInSectionConfigBlock = (Int) -> UIView?
 public typealias HLTableViewHeightInSectionConfigBlock = (Int) -> CGFloat
 
 public typealias HLTableViewEditingStyleConfigBlock = (IndexPath) -> UITableViewCell.EditingStyle?
+public typealias HLTableViewEditingActionsConfigBlock = (IndexPath) -> [UITableViewRowAction]?
 
 open class HLTableView: HLView, UITableViewDelegate {
 
@@ -42,6 +43,7 @@ open class HLTableView: HLView, UITableViewDelegate {
     var footerHeightInSectionBlock: HLTableViewHeightInSectionConfigBlock?
 
     var editingStyeBlock: HLTableViewEditingStyleConfigBlock?
+    var editingActionsBlock: HLTableViewEditingActionsConfigBlock?
 
     lazy public var tableView = UITableView().then({ (tableView) in
         tableView.backgroundColor = UIColor.clear
@@ -97,7 +99,7 @@ open class HLTableView: HLView, UITableViewDelegate {
             block?()
         }).then {
 
-            $0.stateLabel?.textColor = UIColor.black
+            $0.stateLabel?.textColor = config?.textColor ?? .black
             $0.stateLabel?.font = config?.font ?? .pingfang(ofSize: 13)
             $0.isRefreshingTitleHidden = false
             $0.isAutomaticallyRefresh = false
@@ -116,7 +118,7 @@ open class HLTableView: HLView, UITableViewDelegate {
         addSubview(tableView)
         tableView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
-        }
+        }        
     }
 
     override open func bindConfig() {
@@ -163,7 +165,28 @@ open class HLTableView: HLView, UITableViewDelegate {
     func reloadData() {
         self.tableView.reloadData()
     }
-
+    
+    public func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        
+        if let view = view as? UITableViewHeaderFooterView {
+            if #available(iOS 14.0, *) {
+                view.backgroundConfiguration = UIBackgroundConfiguration.clear()
+            } else {
+                // Fallback on earlier versions
+            }
+        }
+    }
+    
+    public func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
+        if let view = view as? UITableViewHeaderFooterView {
+            if #available(iOS 14.0, *) {
+                view.backgroundConfiguration = UIBackgroundConfiguration.clear()
+            } else {
+                // Fallback on earlier versions
+            }
+        }
+    }
+        
     /// Cell 高度
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 
@@ -194,6 +217,9 @@ open class HLTableView: HLView, UITableViewDelegate {
         return self.editingStyeBlock?(indexPath) ?? UITableViewCell.EditingStyle.none
     }
 
+    open func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        return self.editingActionsBlock?(indexPath)
+    }
 }
 
 extension HLTableView {
@@ -283,6 +309,11 @@ extension HLTableView {
 
     public func setEditingStye(_ block: HLTableViewEditingStyleConfigBlock?) -> Self {
         editingStyeBlock = block
+        return self
+    }
+    
+    public func setEditingActions(_ block: HLTableViewEditingActionsConfigBlock?) -> Self {
+        editingActionsBlock = block
         return self
     }
 }

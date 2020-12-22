@@ -12,7 +12,7 @@ import Foundation
 import RxDataSources
 
 extension String {
-    func toCollectionCell() -> HLCollectionViewCell? {
+    public func toCollectionCell() -> HLCollectionViewCell? {
 
         if let clsType = self.toClass() as? HLCollectionViewCell.Type {
             return clsType.init()
@@ -23,7 +23,7 @@ extension String {
 
 class HLCollectioViewDataSource {
 
-    typealias CellEventBlock = (HLCollectionViewCell) -> Void
+    typealias CellEventBlock = (HLCollectionViewCell, IndexPath) -> Void
     static func generateDataSource(style: HLTableViewStyle, eventBlock: CellEventBlock? = nil) -> RxCollectionViewSectionedReloadDataSource<SectionModel<String, HLCellType>> {
 
         return RxCollectionViewSectionedReloadDataSource<SectionModel<String, HLCellType>>(
@@ -35,12 +35,14 @@ class HLCollectioViewDataSource {
                 }
                 if cell.isKind(of: HLCollectionViewCell.self) {
                     cell.data = item.cellData
-                    eventBlock?(cell)
+                    eventBlock?(cell, indexPath)
                 } else {
                     print("Not HLCellType")
                 }
                 return cell
-        })
+            }, canMoveItemAtIndexPath:  { (datasoure, indexpath) -> Bool in
+                return true
+            })
     }
 
     static func generateDataSourceUIWithSection() -> (

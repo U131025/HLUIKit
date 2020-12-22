@@ -14,22 +14,27 @@ import RxCocoa
 open class HLTableViewController: HLViewController, UITableViewDelegate {
 
     public var style: HLTableViewStyle = .normal
+    public var bounces: Bool = true {
+        didSet {
+            listView.tableView.bounces = bounces
+        }
+    }
 
     fileprivate var itemSelectedBlock: HLItemSelectedBlock?
     fileprivate var itemSelectedIndexPathBlock: HLItemSelectedIndexPathBlock?
 
     lazy public var listView = HLTableView()
         .setStyle(self.style)
-        .setTableViewConfig(config: {[unowned self] (tableView) in
+        .setTableViewConfig(config: {(tableView) in
             self.setTableViewConfig(tableView)
         })
-        .setCellConfig(config: {[unowned self] (cell, indexPath) in
+        .setCellConfig(config: {(cell, indexPath) in
             self.cellConfig(cell, indexPath)
         })
-        .selectedAction(action: {[unowned self] (type) in
+        .selectedAction(action: {(type) in
             self.itemSelected(type)
         })
-        .selectedIndexPathAction(action: {[unowned self] (indexPath) in
+        .selectedIndexPathAction(action: {(indexPath) in
             self.itemSelected(indexPath: indexPath)
         })
         .build()
@@ -71,8 +76,8 @@ open class HLTableViewController: HLViewController, UITableViewDelegate {
 
                 _ = viewModel.items
                     .takeUntil(self.rx.deallocated)
-                    .subscribe(onNext: {[unowned self] (sections) in
-                        _ = self.listView.setSections(sections: sections)
+                    .subscribe(onNext: {[weak self] (sections) in
+                        _ = self?.listView.setSections(sections: sections)
                     })
 
                 viewModel.refresh()
@@ -102,7 +107,7 @@ open class HLTableViewController: HLViewController, UITableViewDelegate {
         self.itemSelectedIndexPathBlock?(indexPath)
     }
 
-    /// 无数据界面
+    /// 无数据界面，需要添加到ViewModel初始化后
     open var noDataView: UIView? {
         didSet {
             initNoDataView()
@@ -121,21 +126,23 @@ open class HLTableViewController: HLViewController, UITableViewDelegate {
 
         view.addSubview(emptyView)
         emptyView.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview()
+            make.edges.equalTo(listView)
         }
 
-        guard let viewModel = viewModel else { return }
+        guard let viewModel = viewModel else {
+            return
+        }
 
         _ = viewModel
             .items
             .takeUntil(self.rx.deallocated)
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: {[unowned self] (sections) in
+            .subscribe(onNext: {[weak self] (sections) in
 
                 if sections.count == 0 || (sections.count == 1 && sections[0].items.count == 0) {
-                    self.view.bringSubviewToFront(emptyView)
+                    self?.view.bringSubviewToFront(emptyView)
                 } else {
-                    self.view.sendSubviewToBack(emptyView)
+                    self?.view.sendSubviewToBack(emptyView)
                 }
             })
     }

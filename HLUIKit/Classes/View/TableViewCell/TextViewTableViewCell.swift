@@ -66,8 +66,8 @@ open class TextViewTableViewCell: HLTableViewCell {
 
         textView.delegate = self
 
-        addSubview(textView)
-        addSubview(hintLabel)
+        contentView.addSubview(textView)
+        contentView.addSubview(hintLabel)
     }
 
     override open func layoutConfig() {

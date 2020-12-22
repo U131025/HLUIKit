@@ -14,7 +14,7 @@ import WebKit
 open class HLWebViewController: HLViewController {
 
     public let webView = WKWebView()
-//    public let webView = UIWebView()
+
     override open func viewDidLoad() {
         super.viewDidLoad()
 
@@ -55,7 +55,7 @@ open class HLWebViewController: HLViewController {
 
     open func loadRequest(url: URL) -> Self {
         let request = URLRequest(url: url)
-//        webView.loadRequest(request)
+        webView.load(request)
         return self
     }
 
@@ -64,20 +64,6 @@ open class HLWebViewController: HLViewController {
         return self
     }
 }
-
-//extension RxBaseWebViewController: UIWebViewDelegate {
-//    public func webViewDidStartLoad(_ webView: UIWebView) {
-//        DefaultWireframe.shared.showWaitingJuhua(message: nil, in: self.view)
-//    }
-//
-//    public func webViewDidFinishLoad(_ webView: UIWebView) {
-//        DefaultWireframe.shared.dismissJuhua()
-//    }
-//
-//    public func webView(_ webView: UIWebView, didFailLoadWithError error: Error) {
-//        DefaultWireframe.shared.showMessageJuhua(message: localizedString("网页加载失败"))
-//    }
-//}
 
 extension HLWebViewController: WKNavigationDelegate {
 
