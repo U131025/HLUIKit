@@ -11,28 +11,45 @@ import RxSwift
 import RxCocoa
 
 open class HLCollectionsTableViewCell: HLTableViewCell {
+    
+    static public var minimumInteritemSpacing: CGFloat = 0
+    static public var minimumLineSpacing: CGFloat = 0
 
     lazy public var listView = HLCollectionView()
-    .setFlowLayout(config: {[weak self] () -> (UICollectionViewFlowLayout?) in
-        return self?.generateFlowLayout()
-    })
-    .selectedAction(action: {[weak self] (type) in
-        self?.cellEvent.onNext((tag: 0, value: type))
-    }).build()
+        .setFlowLayout(config: {[weak self] () -> (UICollectionViewFlowLayout?) in
+            return self?.generateFlowLayout()
+        })
+        .setCellConfig(config: { (cell, indexPath) in
+            self.cellConfigBlock?(cell, indexPath)
+            self.cellConfig(cell: cell, indexPath: indexPath)
+        })
+        .selectedAction(action: {[weak self] (type) in
+            self?.itemSelected(type)
+            self?.cellEvent.onNext((tag: 0, value: type))
+        })
+        .build()
+    
+    public var cellConfigBlock: HLCollectionCellConfigBlock?
+    open func cellConfig(cell: HLCollectionViewCell, indexPath: IndexPath) {
+    }
+    
+    open func itemSelected(_ type: HLCellType) {
+        
+    }
 
     /// 布局
     open func generateFlowLayout() -> UICollectionViewFlowLayout? {
         return UICollectionViewFlowLayout().then { (layout) in
             layout.scrollDirection = .vertical
-            layout.minimumInteritemSpacing = 0
-            layout.minimumLineSpacing = 0
+            layout.minimumInteritemSpacing = HLCollectionsTableViewCell.minimumInteritemSpacing
+            layout.minimumLineSpacing = HLCollectionsTableViewCell.minimumLineSpacing
         }
     }
 
     override open func initConfig() {
         super.initConfig()
 
-        addSubview(listView)
+        contentView.addSubview(listView)
         listView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
         }

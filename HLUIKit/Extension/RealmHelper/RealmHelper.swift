@@ -13,24 +13,28 @@ import RxCocoa
 
 let realmIdentifier = "MyInMemoryRealm"
 
-class RealmHelper {
+public class RealmHelper {
+    
+    /* Realm 数据库配置，用于数据库的迭代更新 */
+    public static var schemaVersion: UInt64 = 0
 
-    enum RealmNofityType {
+    public enum RealmNofityType {
         case initial
         case update
     }
 
     /// 配置数据库
-    class func configRealm() {
+    public class func configRealm() {
 
         /* Realm 数据库配置，用于数据库的迭代更新 */
-        let schemaVersion: UInt64 = 2
+//        let schemaVersion: UInt64 = 2
 
-        let config = Realm.Configuration(schemaVersion: schemaVersion, migrationBlock: { _, oldSchemaVersion in
+        let config = Realm.Configuration(schemaVersion: RealmHelper.schemaVersion, migrationBlock: { _, oldSchemaVersion in
 
             /* 什么都不要做！Realm 会自行检测新增和需要移除的属性，然后自动更新硬盘上的数据库架构 */
-            if oldSchemaVersion < schemaVersion {}
+            if oldSchemaVersion < RealmHelper.schemaVersion {}
         })
+                
         Realm.Configuration.defaultConfiguration = config
         Realm.asyncOpen { (realm, error) in
 
@@ -43,13 +47,25 @@ class RealmHelper {
         }
     }
 
-    static func queryFirst<Element: Object>(_ type: Element.Type, predicate: NSPredicate? = nil, identifier: String? = nil) -> Element? {
+    public class func queryFirst<Element: Object>(_ type: Element.Type, predicate: NSPredicate? = nil, identifier: String? = nil) -> Element? {
 
         let finder = query(type, predicate: predicate, identifier: identifier)?.first?.copy()
         return finder as? Element
     }
+    
+    public class func query<Element: Object>(_ type: Element.Type, predicate: NSPredicate? = nil) -> Observable<Results<Element>> {
+        return Observable.create { (obs) -> Disposable in
+            
+            if let finder = query(type, predicate: predicate) {
+                obs.onNext(finder)
+                obs.onCompleted()
+            }
+            
+            return Disposables.create()
+        }
+    }
 
-    static func query<Element: Object>(_ type: Element.Type, predicate: NSPredicate? = nil, identifier: String? = nil) -> Results<Element>? {
+    public class func query<Element: Object>(_ type: Element.Type, predicate: NSPredicate? = nil, identifier: String? = nil) -> Results<Element>? {
 
         var realm: Realm?
         if let identifier = identifier {
@@ -70,7 +86,7 @@ class RealmHelper {
         return finders
     }
 
-    static func update(_ list: [Object], identifier: String? = nil, isReset: Bool = false) {
+    public class func update(_ list: [Object], identifier: String? = nil, isReset: Bool = false) {
 
         let queue = DispatchQueue(label: "RealmQueueIdetifier", qos: .background)
         queue.async {
@@ -108,7 +124,7 @@ class RealmHelper {
         }
     }
 
-    static func notify(_ objType: Object.Type, _ predicate: NSPredicate? = nil, identifier: String? = nil) -> Observable<RealmNofityType> {
+    public class func notify(_ objType: Object.Type, _ predicate: NSPredicate? = nil, identifier: String? = nil) -> Observable<RealmNofityType> {
 
         return Observable.create({ (obs) -> Disposable in
 
@@ -147,7 +163,7 @@ class RealmHelper {
     }
 
     /// 删除会有异常，Object需要实现NSCopying协议
-    static func remove(_ objType: Object.Type, predicate: NSPredicate? = nil, identifier: String? = nil) {
+    public class func remove(_ objType: Object.Type, predicate: NSPredicate? = nil, identifier: String? = nil) {
 
         do {
             var realm: Realm?
@@ -180,7 +196,7 @@ class RealmHelper {
 
 extension Object {
 
-    func save() {
+    public func save() {
         RealmHelper.update([self])
     }
 }

@@ -15,6 +15,10 @@ public struct HLSeparatorConfig {
     public var offset: CGFloat = 0
     public var height: CGFloat = 1
     public var width: CGFloat?
+    
+    public init() {
+        
+    }
 }
 
 open class HLSeparatorCell: HLTableViewCell {

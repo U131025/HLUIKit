@@ -26,9 +26,8 @@ extension UIViewController {
 
         if let icon = icon {
             leftButton.imageView?.contentMode = .scaleAspectFit
-            leftButton.contentHorizontalAlignment = .left
-            leftButton.setImage(icon, for: .normal)
-            leftButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+            leftButton.contentHorizontalAlignment = .center
+            leftButton.setImage(icon, for: .normal)           
         }
 
         if let text = text {
@@ -48,8 +47,6 @@ extension UIViewController {
 
     public func setNavRightItem(_ button: UIButton) -> Observable<()> {
 
-//        button.translatesAutoresizingMaskIntoConstraints = false
-        button.contentHorizontalAlignment = .right
         self.navigationItem.rightBarButtonItem = UIBarButtonItem.init(customView: button)
 
         return button.rx.tap.asObservable()

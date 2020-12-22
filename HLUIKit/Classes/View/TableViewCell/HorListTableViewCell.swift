@@ -25,7 +25,7 @@ open class HorListTableViewCell: HLCollectionsTableViewCell {
         super.initConfig()
 
         listView.snp.remakeConstraints { (make) in
-            make.edges.equalToSuperview().inset(UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15))
+            make.edges.equalToSuperview().inset(UIEdgeInsets(top: 0, left: HLTableViewCell.defaultCellMarginValue, bottom: 0, right: HLTableViewCell.defaultCellMarginValue))
         }
     }
 }

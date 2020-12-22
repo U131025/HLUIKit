@@ -18,7 +18,7 @@ public typealias HLItemSelectedIndexPathBlock = (IndexPath) -> Void
 
 public typealias HLCollectionViewSizeInSectionConfigBlock = (Int) -> CGSize
 
-public typealias HLCollectionCellConfigBlock = (HLCollectionViewCell) -> Void
+public typealias HLCollectionCellConfigBlock = (HLCollectionViewCell, IndexPath) -> Void
 
 open class HLCollectionView: HLView, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate {
 
@@ -62,14 +62,14 @@ open class HLCollectionView: HLView, UICollectionViewDelegateFlowLayout, UIColle
     // MARK: DataSource
     lazy public var dataSource: RxCollectionViewSectionedReloadDataSource<SectionModel<String, HLCellType>> = {
 
-        return HLCollectioViewDataSource.generateDataSource(style: self.style, eventBlock: { (cell) in
+        return HLCollectioViewDataSource.generateDataSource(style: self.style, eventBlock: { (cell, indexPath) in
 
             cell.cellEvent
                 .subscribe(onNext: {[unowned self] (info) in
                     self.cellEvent.onNext(info)
                 }).disposed(by: cell.disposeBag)
 
-            self.cellConfigBlock?(cell)
+            self.cellConfigBlock?(cell, indexPath)
         })
     }()
 
@@ -91,7 +91,7 @@ open class HLCollectionView: HLView, UICollectionViewDelegateFlowLayout, UIColle
             })
             .takeUntil(self.rx.deallocated)
             .bind(to: collectionView.rx.items(dataSource: self.dataSource))
-
+        
 //        _ = collectionView.rx
 //            .modelSelected(RxBaseCellType.self)
 //            .takeUntil(self.rx.deallocated)
@@ -128,7 +128,9 @@ open class HLCollectionView: HLView, UICollectionViewDelegateFlowLayout, UIColle
 
         return CGSize.zero
     }
-
+    
+    
+    
     // MARK: UICollectionViewDelegate
 //    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
 //        return headerHeightInSectionBlock?(section) ?? CGSize(width: kScreenW, height: 0.001)

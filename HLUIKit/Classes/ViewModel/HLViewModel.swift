@@ -33,7 +33,7 @@ open class HLViewModel {
     public let pageSize: Int = 20
 
     public var disposeBag = DisposeBag()
-    public var disposabel: Disposable?
+    public var disposable: Disposable?
 
     /// 数据源
     public var items = BehaviorRelay<[SectionModel<String, HLCellType>]>(value: [])
@@ -81,7 +81,9 @@ open class HLViewModel {
 
     /// 刷新
     open func refresh() {
+        
         refresh(type: .reload)
+        HLTableViewCell.defaultCellMarginValue = 16
     }
 
     open func refresh(type: HLRefreshType) {
@@ -95,7 +97,7 @@ open class HLViewModel {
 
     //cell内部控件绑定扩展
     open func cellConfig(_ cell: HLTableViewCell, _ indexPath: IndexPath) {
-
+      
     }
 }
 

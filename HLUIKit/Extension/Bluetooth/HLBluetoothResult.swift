@@ -1,6 +1,6 @@
 import Foundation
 
-enum RxBluetoothResult<T, E> {
+public enum HLBluetoothResult<T, E> {
     case success(T)
     case error(E)
 }

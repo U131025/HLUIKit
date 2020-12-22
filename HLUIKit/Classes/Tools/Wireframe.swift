@@ -25,7 +25,7 @@ public let defaultHUDShowTime: TimeInterval = 2
 public typealias CompleteBlock = () -> Void
 
 public protocol Wireframe {
-    func open(url: URL)
+    func open(url: URL?) -> Bool
     func promptFor<Action: CustomStringConvertible>(_ title: String, _ message: String, cancelAction: Action, actions: [Action]) -> Observable<Action>
 }
 
@@ -33,8 +33,18 @@ open class DefaultWireframe: NSObject, Wireframe {
     static public let shared = DefaultWireframe()
     public let juhua = JGProgressHUD.init(style: .dark)
     public var disposeBag = DisposeBag()
+    
+    public func open(urls: [URL?]) {
+        for url in urls {
+            if open(url: url) == true {
+                break
+            }
+        }
+    }
 
-    public func open(url: URL) {
+    public func open(url: URL?) -> Bool {
+        
+        guard let url = url else { return false }
 
         if UIApplication.shared.canOpenURL(url) {
             if #available(iOS 10.0, *) {
@@ -52,9 +62,10 @@ open class DefaultWireframe: NSObject, Wireframe {
             } else {
                 // Fallback on earlier versions
             }
-            return
+            return true
         } else {
-            showErrorJuhua(message: localizedString("无法打开\(url.absoluteString)"))
+//            showErrorJuhua(message: localizedString("无法打开\(url.absoluteString)"))
+            return false
         }
     }
 
@@ -109,6 +120,7 @@ extension DefaultWireframe {
             let window: UIWindow = ((UIApplication.shared.delegate?.window)!)!
 
             let juhua = JGProgressHUD.init(style: .dark)
+            juhua.interactionType = .blockNoTouches
             juhua.indicatorView = nil
             juhua.textLabel.text = message ?? ""
             juhua.show(in: view ?? window)
@@ -127,6 +139,7 @@ extension DefaultWireframe {
             let window: UIWindow = ((UIApplication.shared.delegate?.window)!)!
 
             let juhua = JGProgressHUD.init(style: style)
+            juhua.interactionType = .blockNoTouches
             juhua.indicatorView = image != nil ? JGProgressHUDImageIndicatorView(image: image!) : nil
             juhua.textLabel.text = message ?? ""
             juhua.show(in: window)
@@ -146,6 +159,7 @@ extension DefaultWireframe {
             let window: UIWindow = ((UIApplication.shared.delegate?.window)!)!
 
             let juhua = JGProgressHUD.init(style: .dark)
+            juhua.interactionType = .blockNoTouches
             juhua.indicatorView = JGProgressHUDErrorIndicatorView.init()
             juhua.textLabel.text = message ?? ""
             juhua.show(in: window)
@@ -160,6 +174,7 @@ extension DefaultWireframe {
             let window: UIWindow = ((UIApplication.shared.delegate?.window)!)!
 
             let juhua = JGProgressHUD.init(style: .dark)
+            juhua.interactionType = .blockNoTouches
             juhua.indicatorView = JGProgressHUDSuccessIndicatorView.init()
             juhua.textLabel.text = message ?? ""
             juhua.show(in: window)
@@ -167,15 +182,15 @@ extension DefaultWireframe {
         }
     }
 
-    public func showWaitingJuhua(message: String? = nil, in view: UIView? = nil) {
+    public func showWaitingJuhua(message: String? = nil, in view: UIView? = nil, interactionType: JGProgressHUDInteractionType = .blockAllTouches) {
 
         if self.juhua.isVisible { return }
 
         DispatchQueue.main.async {
             let window: UIWindow = ((UIApplication.shared.delegate?.window)!)!
             self.juhua.indicatorView = JGProgressHUDIndeterminateIndicatorView.init()
+            self.juhua.interactionType = .blockNoTouches
 
-//            self.juhua.indicatorView = JGProgressHUDIndicatorView.init()
             self.juhua.textLabel.text = message ?? ""
             self.juhua.show(in: view ?? window)
         }
