@@ -1,6 +1,0 @@
-framework module HLUIKit {
-  umbrella header "HLUIKit-umbrella.h"
-
-  export *
-  module * { export * }
-}

@@ -14,7 +14,12 @@ import RxCocoa
 open class HLTableViewController: HLViewController, UITableViewDelegate {
 
     public var style: HLTableViewStyle = .normal
-    
+    public var bounces: Bool = true {
+        didSet {
+            listView.tableView.bounces = bounces
+        }
+    }
+
     fileprivate var itemSelectedBlock: HLItemSelectedBlock?
     fileprivate var itemSelectedIndexPathBlock: HLItemSelectedIndexPathBlock?
 
@@ -32,9 +37,6 @@ open class HLTableViewController: HLViewController, UITableViewDelegate {
         .selectedIndexPathAction(action: {(indexPath) in
             self.itemSelected(indexPath: indexPath)
         })
-        .setCalculateCellHeight({ (ip) -> CGFloat? in
-            return self.calculateCellHeight(ip)
-        })
         .build()
 
     required public init(style: HLTableViewStyle = .normal) {
@@ -45,7 +47,7 @@ open class HLTableViewController: HLViewController, UITableViewDelegate {
     required public init?(coder aDecoder: NSCoder) {
 
         self.style = .normal
-        super.init(coder: aDecoder)        
+        super.init(coder: aDecoder)
     }
 
     override open func viewDidLoad() {
@@ -81,14 +83,6 @@ open class HLTableViewController: HLViewController, UITableViewDelegate {
                 viewModel.refresh()
             }
         }
-    }
-    
-    open func calculateCellHeight(_ indexPath: IndexPath) -> CGFloat? {
-        if let height = viewModel?.calculateCellHeight(indexPath) {
-            return height
-        }
-        
-        return nil
     }
 
     // MARK: 扩展
@@ -130,10 +124,10 @@ open class HLTableViewController: HLViewController, UITableViewDelegate {
         noDataView?.removeFromSuperview()
         guard let emptyView = noDataView else { return }
 
-//        view.addSubview(emptyView)
-//        emptyView.snp.makeConstraints { (make) in
-//            make.edges.equalTo(listView)
-//        }
+        view.addSubview(emptyView)
+        emptyView.snp.makeConstraints { (make) in
+            make.edges.equalTo(listView)
+        }
 
         guard let viewModel = viewModel else {
             return
@@ -143,19 +137,12 @@ open class HLTableViewController: HLViewController, UITableViewDelegate {
             .items
             .takeUntil(self.rx.deallocated)
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: {[unowned self] (sections) in
-                
-                emptyView.removeFromSuperview()
+            .subscribe(onNext: {[weak self] (sections) in
+
                 if sections.count == 0 || (sections.count == 1 && sections[0].items.count == 0) {
-//                    self.view.bringSubviewToFront(emptyView)
-    
-                    self.view.insertSubview(emptyView, aboveSubview: self.listView)
-                    emptyView.snp.remakeConstraints { (make) in
-                        make.edges.equalTo(self.listView)
-                    }
-                    
+                    self?.view.bringSubviewToFront(emptyView)
                 } else {
-//                    self.view.sendSubviewToBack(emptyView)
+                    self?.view.sendSubviewToBack(emptyView)
                 }
             })
     }

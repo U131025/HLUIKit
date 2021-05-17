@@ -16,7 +16,7 @@ let realmIdentifier = "MyInMemoryRealm"
 public class RealmHelper {
     
     /* Realm 数据库配置，用于数据库的迭代更新 */
-    public static var schemaVersion: UInt64 = 1
+    public static var schemaVersion: UInt64 = 0
 
     public enum RealmNofityType {
         case initial

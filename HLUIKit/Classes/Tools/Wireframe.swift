@@ -114,8 +114,6 @@ open class DefaultWireframe: NSObject, Wireframe {
 extension DefaultWireframe {
 
     public func showMessageJuhua(message: String?, hideAfter: TimeInterval = defaultHUDShowTime, in view: UIView? = nil, completeBlock: CompleteBlock? = nil) {
-        
-        if message == nil { return }
 
         dismissJuhua()
         DispatchQueue.main.async {
@@ -186,13 +184,9 @@ extension DefaultWireframe {
 
     public func showWaitingJuhua(message: String? = nil, in view: UIView? = nil, interactionType: JGProgressHUDInteractionType = .blockAllTouches) {
 
+        if self.juhua.isVisible { return }
+
         DispatchQueue.main.async {
-            
-            if self.juhua.isVisible {
-                self.juhua.textLabel.text = message ?? ""
-                return
-            }
-            
             let window: UIWindow = ((UIApplication.shared.delegate?.window)!)!
             self.juhua.indicatorView = JGProgressHUDIndeterminateIndicatorView.init()
             self.juhua.interactionType = .blockNoTouches
