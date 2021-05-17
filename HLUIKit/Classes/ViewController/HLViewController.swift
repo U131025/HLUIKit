@@ -66,7 +66,7 @@ open class HLViewController: UIViewController {
 
     override open func viewDidLoad() {
         super.viewDidLoad()
-
+        setNeedsStatusBarAppearanceUpdate()
         view.backgroundColor = .white
     }
 }

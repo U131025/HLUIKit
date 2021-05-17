@@ -14,6 +14,8 @@ public typealias HLTableViewCellSelectedBlock = (Bool) -> Void
 public typealias HLTableViewCellActionBlock = (HLCellType) -> Void
 
 open class HLTableViewCell: UITableViewCell {
+    
+    public static var defaultCellMarginValue: CGFloat = 30
 
     public var disposeBag = DisposeBag()
     public var data: Any? {
@@ -50,6 +52,13 @@ open class HLTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         self.selectionStyle = .none
+        self.backgroundColor = .clear
+        
+        if #available(iOS 14.0, *) {
+            self.backgroundConfiguration = UIBackgroundConfiguration.clear()
+        } else {
+            // Fallback on earlier versions
+        }
 
         initConfig()
         layoutConfig()

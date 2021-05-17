@@ -77,7 +77,7 @@ open class HLCollectionViewCell: UICollectionViewCell {
             self.selectedBlock?(newValue)
         }
     }
-
+    
     public func setSelectedStatus(config: HLCollectionViewCellSelectedBlock?) {
         selectedBlock = config
     }

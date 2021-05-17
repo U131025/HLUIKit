@@ -24,10 +24,13 @@ public typealias HLTableViewViewInSectionConfigBlock = (Int) -> UIView?
 public typealias HLTableViewHeightInSectionConfigBlock = (Int) -> CGFloat
 
 public typealias HLTableViewEditingStyleConfigBlock = (IndexPath) -> UITableViewCell.EditingStyle?
+public typealias HLTableViewEditingActionsConfigBlock = (IndexPath) -> [UITableViewRowAction]?
 
-open class HLTableView: HLView, UITableViewDelegate {
+public typealias HLCellCalculateHeightBlock = (IndexPath) -> CGFloat?
 
-    var style: HLTableViewStyle = .normal
+open class HLTableView: UITableView, UITableViewDelegate {
+
+    var hlStyle: HLTableViewStyle = .normal
     var cellEvent = PublishSubject<(tag: Int, value: Any?)>()
     var items = BehaviorRelay<[SectionModel<String, HLCellType>]>(value: [])
 
@@ -42,15 +45,38 @@ open class HLTableView: HLView, UITableViewDelegate {
     var footerHeightInSectionBlock: HLTableViewHeightInSectionConfigBlock?
 
     var editingStyeBlock: HLTableViewEditingStyleConfigBlock?
+    var editingActionsBlock: HLTableViewEditingActionsConfigBlock?
+    /// 自定义计算Cell高度
+    var calculateCellHeightBlock: HLCellCalculateHeightBlock?
+    
+    public var disposeBag = DisposeBag()
+    
+    public override init(frame: CGRect, style: UITableView.Style) {
+        super.init(frame: frame, style: style)
+        initConfig()
+        bindConfig()
+    }
+    
+    public init() {
+        super.init(frame: .zero, style: .plain)
+        initConfig()
+        bindConfig()
+    }
+    
+    required public init?(coder: NSCoder) {
+        super.init(coder: coder)
+        initConfig()
+        bindConfig()
+    }
 
-    lazy public var tableView = UITableView().then({ (tableView) in
-        tableView.backgroundColor = UIColor.clear
-        tableView.separatorStyle = .none
-        tableView.showsVerticalScrollIndicator = false
-    })
+//    lazy public var tableView = UITableView().then({ (tableView) in
+//        tableView.backgroundColor = UIColor.clear
+//        tableView.separatorStyle = .none
+//        tableView.showsVerticalScrollIndicator = false
+//    })
 
     // MARK: DataSource
-    lazy public var dataSource: RxTableViewSectionedReloadDataSource<SectionModel<String, HLCellType>> = {
+    lazy public var hlDataSource: RxTableViewSectionedReloadDataSource<SectionModel<String, HLCellType>> = {
 
         return HLTableViewDataSource.generateDataSource(style: .normal, eventBlock: {[unowned self] (cell, indexPath) in
 
@@ -68,11 +94,11 @@ open class HLTableView: HLView, UITableViewDelegate {
 
         let header = MJRefreshNormalHeader.init(refreshingBlock: {[weak self] in
 
-            if (self?.tableView.mj_footer) != nil {
-                self?.tableView.mj_footer?.resetNoMoreData()
+            if (self?.mj_footer) != nil {
+                self?.mj_footer?.resetNoMoreData()
             }
 
-            self?.tableView.mj_footer?.resetNoMoreData()
+            self?.mj_footer?.resetNoMoreData()
             block?()
 
         }).then {
@@ -97,7 +123,7 @@ open class HLTableView: HLView, UITableViewDelegate {
             block?()
         }).then {
 
-            $0.stateLabel?.textColor = UIColor.black
+            $0.stateLabel?.textColor = config?.textColor ?? .black
             $0.stateLabel?.font = config?.font ?? .pingfang(ofSize: 13)
             $0.isRefreshingTitleHidden = false
             $0.isAutomaticallyRefresh = false
@@ -111,18 +137,21 @@ open class HLTableView: HLView, UITableViewDelegate {
     }
 
     //cell内部控件绑定扩展        
-    override open func initConfig() {
-
-        addSubview(tableView)
-        tableView.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview()
-        }
+    open func initConfig() {
+        
+        backgroundColor = UIColor.clear
+        separatorStyle = .none
+        showsVerticalScrollIndicator = false
+        
+        estimatedRowHeight = 0
+        estimatedSectionHeaderHeight = 0
+        estimatedSectionFooterHeight = 0
+               
     }
 
-    override open func bindConfig() {
-        super.bindConfig()
-
-        tableView.rx.setDelegate(self).disposed(by: disposeBag)
+    open func bindConfig() {
+        self.disposeBag = DisposeBag()
+        self.rx.setDelegate(self).disposed(by: disposeBag)
     }
 
     /// 缺省事件绑定，晚于initConfig, bindConfig执行
@@ -132,8 +161,8 @@ open class HLTableView: HLView, UITableViewDelegate {
             .do(onNext: {[unowned self] (_) in
                 self.endRefreshing()
             })
-            .takeUntil(self.rx.deallocated)
-            .bind(to: tableView.rx.items(dataSource: dataSource))
+            .takeUntil(rx.deallocated)
+            .bind(to: rx.items(dataSource: hlDataSource))
 
 //        _ = tableView.rx
 //            .modelSelected(RxBaseCellType.self)
@@ -142,12 +171,12 @@ open class HLTableView: HLView, UITableViewDelegate {
 //                self.itemSelectedBlock?(type)
 //            })
 //
-        _ = tableView.rx
+        _ = rx
             .itemSelected
             .takeUntil(self.rx.deallocated)
             .subscribe(onNext: {[unowned self] (indexPath) in
 
-                let type = self.dataSource[indexPath]
+                let type = self.hlDataSource[indexPath]
                 self.itemSelectedBlock?(type)
 
                 self.itemSelectedIndexPathBlock?(indexPath)
@@ -156,18 +185,52 @@ open class HLTableView: HLView, UITableViewDelegate {
     }
 
     func endRefreshing() {
-        self.tableView.mj_header?.endRefreshing()
-        self.tableView.mj_footer?.endRefreshing()
+        self.mj_header?.endRefreshing()
+        self.mj_footer?.endRefreshing()
     }
 
-    func reloadData() {
-        self.tableView.reloadData()
+//    public func updateCell(_ indexPath: IndexPath, value: HLCellType) {
+//
+//        var item = self.items.value[safe: indexPath.section]?.items[safe: indexPath.row]
+//        item = value
+//        tableView.reloadItemsAtIndexPaths([indexPath], animationStyle: .none)
+//    }
+    
+    public func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        
+        if let view = view as? UITableViewHeaderFooterView {
+            if #available(iOS 14.0, *) {
+                view.backgroundConfiguration = UIBackgroundConfiguration.clear()
+            } else {
+                // Fallback on earlier versions
+            }
+        }
     }
-
+    
+    public func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
+        if let view = view as? UITableViewHeaderFooterView {
+            if #available(iOS 14.0, *) {
+                view.backgroundConfiguration = UIBackgroundConfiguration.clear()
+            } else {
+                // Fallback on earlier versions
+            }
+        }
+    }
+        
     /// Cell 高度
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-
+        
+        if let block = calculateCellHeightBlock, let height = block(indexPath) {
+            return height
+        }
+        
+        return getCellHeight(indexPath)
+    }
+    // 获取cell的高度
+    public func getCellHeight(_ indexPath: IndexPath) -> CGFloat {
+        
         let item = self.items.value[safe: indexPath.section]?.items[safe: indexPath.row]
+        
         return item?.cellHeight ?? 0
     }
 
@@ -194,12 +257,21 @@ open class HLTableView: HLView, UITableViewDelegate {
         return self.editingStyeBlock?(indexPath) ?? UITableViewCell.EditingStyle.none
     }
 
+    open func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        return self.editingActionsBlock?(indexPath)
+    }
 }
 
 extension HLTableView {
+    ///Cell高度
+    public func setCalculateCellHeight(_ block: HLCellCalculateHeightBlock?) -> Self {
+        self.calculateCellHeightBlock = block
+        return self
+    }
+    
     /// 样式
     public func setStyle(_ style: HLTableViewStyle) -> Self {
-        self.style = style
+        self.hlStyle = style
         return self
     }
     /// Setion Header 设置
@@ -227,7 +299,7 @@ extension HLTableView {
 
     /// TableView 设置
     public func setTableViewConfig(config: ((UITableView) -> Void)) -> Self {
-        config(tableView)
+        config(self)
         return self
     }
 
@@ -250,13 +322,13 @@ extension HLTableView {
 
     /// 设置刷新头部
     public func setRefreshHeader(block: CompleteBlock?, config: TextCellConfig? = nil) -> Self {
-        self.tableView.mj_header = refreshHeader(block: block, config: config)
+        self.mj_header = refreshHeader(block: block, config: config)
         return self
     }
     // 设置加载更多footer
     public func setLoardMoreFooter(block: CompleteBlock?, config: TextCellConfig? = nil) -> Self {
 
-        self.tableView.mj_footer = loadMoreFooter(block: block, config: config)
+        self.mj_footer = loadMoreFooter(block: block, config: config)
         return self
     }
 
@@ -283,6 +355,11 @@ extension HLTableView {
 
     public func setEditingStye(_ block: HLTableViewEditingStyleConfigBlock?) -> Self {
         editingStyeBlock = block
+        return self
+    }
+    
+    public func setEditingActions(_ block: HLTableViewEditingActionsConfigBlock?) -> Self {
+        editingActionsBlock = block
         return self
     }
 }

@@ -9,14 +9,15 @@
 import Foundation
 import RxDataSources
 
+
+
 public protocol HLCellType {
     // Cell的类名
     var cellClass: AnyClass { get }
     
-//    var identifier: String { get }
-    
     // tableViewCell使用
     var cellHeight: CGFloat { get }
+        
     // collectionCell使用
     var cellSize: CGSize { get }
     // cell里使用的数据
@@ -32,7 +33,7 @@ extension HLCellType {
 //    public var classType: AnyClass {
 //        return RxBaseTableViewCell.self
 //    }
-
+    
     public var identifier: String {
         return "\(cellClass)"
     }
@@ -40,7 +41,7 @@ extension HLCellType {
     public var cellHeight: CGFloat {
         return 44
     }
-
+    
     public var cellSize: CGSize {
         return CGSize.zero
     }
@@ -50,6 +51,8 @@ extension HLCellType {
     public var content: Any? { return self }
 
     public var tag: Int { return 0 }
+    
+    
 }
 
 extension String: HLCellType {

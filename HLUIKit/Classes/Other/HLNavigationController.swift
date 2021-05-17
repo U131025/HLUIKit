@@ -11,6 +11,12 @@ import UIKit
 public struct HLThemeConfig {
     public var navBarColor: UIColor = .white
     public var textColor: UIColor = .black
+            
+    public init(navBarColor: UIColor = .white, textColor: UIColor = .black) {
+        // This initializer intentionally left empty
+        self.navBarColor = navBarColor
+        self.textColor = textColor
+    }
 }
 
 public enum HLThemeType {
@@ -85,6 +91,7 @@ extension UIViewController {
 open class HLNavigationController: UINavigationController {
 
     @IBInspectable public var backImage: UIImage?
+    static public var backArrowImage: UIImage?
 
     // 是否支持侧滑手势
     fileprivate var isEnableEdegePan = true
@@ -103,7 +110,7 @@ open class HLNavigationController: UINavigationController {
 
 //        self.navigationBar.setBackgroundImage(createImageWithColor(color: UIColor.init(hex: "257BFB")), for: .default)
 
-        self.navigationBar.shadowImage = UIImage.init()
+        self.navigationBar.shadowImage = UIImage()
 
         /// 5s 导航栏背景处理
         for view in self.navigationBar.subviews {
@@ -126,7 +133,7 @@ open class HLNavigationController: UINavigationController {
 
         if self.viewControllers.count != 0 {
 
-            if let image = backImage {
+            if let image = backImage ?? HLNavigationController.backArrowImage {
 
                 let leftButton = UIButton(type: .custom)
                 leftButton.frame = CGRect(x: 0, y: 0, width: 44, height: 44)
@@ -142,7 +149,6 @@ open class HLNavigationController: UINavigationController {
         }
 
         super.pushViewController(viewController, animated: animated)
-
     }
 
     @objc open func backAtion () {
@@ -156,6 +162,10 @@ open class HLNavigationController: UINavigationController {
 
     override open var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .portrait
+    }
+    
+    open override var childForStatusBarStyle: UIViewController? {
+        return self.topViewController
     }
 
 }

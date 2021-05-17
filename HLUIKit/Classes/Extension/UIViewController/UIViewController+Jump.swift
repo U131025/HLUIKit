@@ -54,15 +54,49 @@ extension UIViewController {
 
     public func present(_ viewController: UIViewController, animated: Bool = true) {
 
-        viewController.modalPresentationStyle = .fullScreen
+        viewController.modalPresentationStyle = .fullScreen        
         self.present(viewController, animated: true, completion: nil)
     }
 
     public func dissmiss() {
-        if self.presentingViewController != nil {
+        if isPresentMode {
             self.dismiss(animated: true, completion: nil)
         } else {
             self.pop()
+        }        
+    }
+    
+    public var isPresentMode: Bool {        
+        if let array = self.navigationController?.viewControllers, array.count > 1 {
+            return false
+        }
+        return true        
+    }
+    
+    public func removeFromNav() {
+        guard let viewControllers = self.navigationController?.viewControllers else {
+            return
+        }
+        
+        for (index, vc) in viewControllers.enumerated() {
+            if vc.classForCoder == self.classForCoder {
+                self.navigationController?.viewControllers.remove(at: index)
+                break
+            }
+        }
+    }
+    
+    public func removeVCFromNav(_ aClass: AnyClass) {
+
+        guard let viewControllers = self.navigationController?.viewControllers else {
+            return
+        }
+
+        for (index, vc) in viewControllers.enumerated() {
+            if vc.classForCoder == aClass {
+                self.navigationController?.viewControllers.remove(at: index)
+                break
+            }
         }
     }
 }

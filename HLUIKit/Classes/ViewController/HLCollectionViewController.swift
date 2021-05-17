@@ -11,20 +11,26 @@ import RxDataSources
 import RxSwift
 import RxCocoa
 
-open class RxBaseCollectionViewController: HLViewController {
+open class HLCollectionViewController: HLViewController {
 
     lazy public var listView = HLCollectionView()
-        .setFlowLayout(config: {[unowned self] () -> (UICollectionViewFlowLayout?) in
-            return self.generateFlowLayout()
+        .setFlowLayout(config: {[weak self] () -> (UICollectionViewFlowLayout?) in
+            return self?.generateFlowLayout()
         })
-        .setCollectionViewConfig(config: {[unowned self] (collectionView) in
-            self.setCollectionViewConfig(collectionView)
+        .setCollectionViewConfig(config: {[weak self] (collectionView) in
+            self?.setCollectionViewConfig(collectionView)
         })
-        .setCellConfig(config: {[unowned self] (cell) in
-            self.cellControlBindConfig(cell)
+        .setCellConfig(config: {(cell, indexPath) in
+            self.cellControlBindConfig(cell, indexPath)
         })
-        .selectedAction(action: {[unowned self] (type) in
-            self.itemSelected(type)
+        .selectedAction(action: {[weak self] (type) in
+            self?.itemSelected(type)
+        })
+        .selectedIndexPathAction(action: {[weak self] (indexPath) in
+            self?.itemSelected(indexPath)
+        })
+        .deselectedIndexPathAction(action: {[weak self] (indexPath) in
+            self?.itemDeselected(indexPath)
         })
         .build()
 
@@ -74,14 +80,21 @@ open class RxBaseCollectionViewController: HLViewController {
     }
 
     /// cell内部控件绑定扩展
-    open func cellControlBindConfig(_ cell: HLCollectionViewCell) {
-
+    open func cellControlBindConfig(_ cell: HLCollectionViewCell, _ indexPath: IndexPath) {
+        self.viewModel?.cellControlBindConfig(cell, indexPath)
     }
 
     /// 选中事件
     open func itemSelected(_ type: HLCellType) {
         self.viewModel?.itemSelected(type)
-        print("==== \(type)")
+    }
+    
+    open func itemSelected(_ indexPath: IndexPath) {
+        self.viewModel?.itemSelected(indexPath: indexPath)
+    }
+    
+    open func itemDeselected(_ indexPath: IndexPath) {
+        self.viewModel?.itemDeselected(indexPath)
     }
 
     override open func reloadData() {
@@ -130,7 +143,7 @@ open class RxBaseCollectionViewController: HLViewController {
     }
 }
 
-extension RxBaseCollectionViewController {
+extension HLCollectionViewController {
 
     public func setItems(_ datas: [HLCellType]) -> Self {
         _ = listView.setItems(datas)

@@ -37,29 +37,29 @@ extension UIView {
     ///   - direction: 方向
     ///   - color: 颜色
 
-    public func addBorderLine(direction: BorderLineType, color: UIColor, offset: Int = 0, width: CGFloat = 1) -> UIView {
+    public func addBorderLine(direction: BorderLineType, color: UIColor, offset: Int = 0, width: CGFloat = 1, interval: CGFloat = 0) -> UIView {
 
         let label = UILabel.init()
         label.backgroundColor = color
         self.addSubview(label)
         label.snp.makeConstraints { (make) in
             if direction == .top {
-                make.top.equalTo(self)
+                make.top.equalTo(self).offset(interval)
                 make.left.equalTo(offset)
                 make.right.equalTo(-offset)
                 make.height.equalTo(width)
             } else if direction == .left {
-                make.left.equalTo(self)
+                make.left.equalTo(self).offset(interval)
                 make.top.equalTo(offset)
                 make.bottom.equalTo(-offset)
                 make.width.equalTo(width)
             } else if direction == .right {
-                make.right.equalTo(self)
+                make.right.equalTo(self).offset(-interval)
                 make.top.equalTo(offset)
                 make.bottom.equalTo(-offset)
                 make.width.equalTo(width)
             } else {
-                make.bottom.equalTo(self)
+                make.bottom.equalTo(self).offset(-interval)
                 make.left.equalTo(offset)
                 make.right.equalTo(-offset)
                 make.height.equalTo(width)

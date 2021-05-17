@@ -60,7 +60,8 @@ extension UIColor {
     }
 
     convenience public init(hex: String) {
-        let scanner = Scanner(string: hex)
+                
+        let scanner = Scanner(string: hex.pregReplace(pattern: "#", with: ""))
         scanner.scanLocation = 0
         var rgbValue: UInt64 = 0
 

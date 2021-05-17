@@ -1,10 +1,13 @@
 PODS:
+  - Alamofire (5.2.2)
+  - Cache (5.3.0)
   - Differentiator (4.0.1)
   - FBSnapshotTestCase (2.1.4):
     - FBSnapshotTestCase/SwiftSupport (= 2.1.4)
   - FBSnapshotTestCase/Core (2.1.4)
   - FBSnapshotTestCase/SwiftSupport (2.1.4):
     - FBSnapshotTestCase/Core
+  - HandyJSON (5.0.2)
   - HLUIKit (1.0.0):
     - JGProgressHUD
     - MJRefresh
@@ -15,9 +18,24 @@ PODS:
     - SDCycleScrollView
     - SnapKit
     - Then
+  - HLUIKit_Moya (1.0.0):
+    - Alamofire
+    - Cache
+    - HandyJSON
+    - Moya/RxSwift
+    - ReachabilitySwift
+    - Result
+    - RxSwift
   - JGProgressHUD (2.1)
   - MJRefresh (3.4.3)
+  - Moya/Core (14.0.0):
+    - Alamofire (~> 5.0)
+  - Moya/RxSwift (14.0.0):
+    - Moya/Core
+    - RxSwift (~> 5.0)
   - MYTableViewIndex (0.8.0)
+  - ReachabilitySwift (5.0.0)
+  - Result (5.0.0)
   - RxCocoa (5.1.1):
     - RxRelay (~> 5)
     - RxSwift (~> 5)
@@ -42,14 +60,21 @@ PODS:
 DEPENDENCIES:
   - FBSnapshotTestCase (~> 2.1.4)
   - HLUIKit (from `../`)
+  - HLUIKit_Moya (from `../HLUIKit_Moya.podspec`)
 
 SPEC REPOS:
   trunk:
+    - Alamofire
+    - Cache
     - Differentiator
     - FBSnapshotTestCase
+    - HandyJSON
     - JGProgressHUD
     - MJRefresh
+    - Moya
     - MYTableViewIndex
+    - ReachabilitySwift
+    - Result
     - RxCocoa
     - RxDataSources
     - RxGesture
@@ -63,14 +88,23 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   HLUIKit:
     :path: "../"
+  HLUIKit_Moya:
+    :path: "../HLUIKit_Moya.podspec"
 
 SPEC CHECKSUMS:
+  Alamofire: 814429acc853c6c54ff123fc3d2ef66803823ce0
+  Cache: 48762993ec44e1d93483c4d4a13edd18452326f4
   Differentiator: 886080237d9f87f322641dedbc5be257061b0602
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
+  HandyJSON: 9e4e236f5d2dbefad5155a77417bbea438201c03
   HLUIKit: 67145d37efc4e0cd430e98b4167cae06bd8dc045
+  HLUIKit_Moya: d488605b26dab1d4f10d7c1a93630f44736a1255
   JGProgressHUD: aa403e9a5b45cae98903c4600cccdd98c0c3ec90
   MJRefresh: 53e3e3219f204425ee6d3e62e8733d3295944cd6
+  Moya: 5b45dacb75adb009f97fde91c204c1e565d31916
   MYTableViewIndex: 55d5d8557b3f2a4de270d8c0260b41f3918ba4e3
+  ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
+  Result: ed341d2f236af425b803e690e9bd8fd0a0cb7c5a
   RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
   RxDataSources: efee07fa4de48477eca0a4611e6d11e2da9c1114
   RxGesture: d6bd7447ca3a596c7a9702a6a2b6a2bb5d8bae54
@@ -81,6 +115,6 @@ SPEC CHECKSUMS:
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   Then: acfe0be7e98221c6204e12f8161459606d5d822d
 
-PODFILE CHECKSUM: db9f092ab4969f15da0f042a0e5cb4293d84172a
+PODFILE CHECKSUM: 69028a133de4905521bcb234603ec49e3bfae580
 
 COCOAPODS: 1.9.1

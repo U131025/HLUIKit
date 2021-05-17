@@ -7,7 +7,7 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'HLUIKit'
+  s.name             = 'HLUIKit_Realm'
   s.version          = '1.0.0'
   s.summary          = '基于RxSwift的界面库'
 
@@ -34,5 +34,7 @@ HLUIKit Realm数据库封装
   s.requires_arc = true
 
   s.dependency 'RealmSwift'
+  s.dependency 'RxSwift'
+  s.dependency 'RxCocoa'
 
 end

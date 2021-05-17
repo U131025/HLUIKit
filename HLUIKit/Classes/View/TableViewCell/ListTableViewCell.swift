@@ -11,20 +11,41 @@ import RxSwift
 import RxCocoa
 
 open class ListTableViewCell: HLTableViewCell {
+    
+    public var cellConfigBlock: HLTableViewCellConfigBlock?
 
     public lazy var list = HLTableView()
         .selectedAction(action: {[unowned self] (type) in
             self.cellEvent.onNext((tag: 0, value: type))
+            self.selectedAction(type)
+        })
+        .setCellConfig(config: { (cell, indexPath) in
+            self.cellConfig(cell: cell, indexPath: indexPath)
+            self.cellConfigBlock?(cell, indexPath)
         })
         .build()
+    
+    open func cellConfig(cell: HLTableViewCell, indexPath: IndexPath) {
+        
+    }
+    
+    open func selectedAction(_ type: HLCellType) {
+        
+    }
 
     override open func initConfig() {
         super.initConfig()
 
-        addSubview(list)
+        contentView.addSubview(list)
         list.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
         }
+    }
+    
+    open override func bindConfig() {
+        super.bindConfig()
+        
+        list.cellEvent.bind(to: event).disposed(by: disposeBag)
     }
 
     override open func updateData() {
@@ -55,6 +76,6 @@ extension ListTableViewCell {
             return cellHeight
         }
 
-        return 44
+        return 0
     }
 }

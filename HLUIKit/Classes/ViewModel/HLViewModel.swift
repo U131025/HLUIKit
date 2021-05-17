@@ -33,7 +33,7 @@ open class HLViewModel {
     public let pageSize: Int = 20
 
     public var disposeBag = DisposeBag()
-    public var disposabel: Disposable?
+    public var disposable: Disposable?
 
     /// 数据源
     public var items = BehaviorRelay<[SectionModel<String, HLCellType>]>(value: [])
@@ -51,11 +51,15 @@ open class HLViewModel {
     open func initConfig() {
 
     }
+    
+    open func release() {
+        disposeBag = DisposeBag()
+        self.viewController = nil
+    }
 
     /// 释放
     deinit {
-        disposeBag = DisposeBag()
-        self.viewController = nil
+        self.release()
     }
 
     /// 自定义事件绑定
@@ -73,6 +77,10 @@ open class HLViewModel {
     open func itemSelected(_ type: HLCellType) {
 
     }
+    
+    open func itemDeselected(_ indexPath: IndexPath) {
+
+    }
 
     /// 序列
     open func itemSelected(indexPath: IndexPath) {
@@ -81,7 +89,9 @@ open class HLViewModel {
 
     /// 刷新
     open func refresh() {
+        
         refresh(type: .reload)
+        HLTableViewCell.defaultCellMarginValue = 16
     }
 
     open func refresh(type: HLRefreshType) {
@@ -95,7 +105,16 @@ open class HLViewModel {
 
     //cell内部控件绑定扩展
     open func cellConfig(_ cell: HLTableViewCell, _ indexPath: IndexPath) {
+      
+    }
+    
+    /// cell内部控件绑定扩展
+    open func cellControlBindConfig(_ cell: HLCollectionViewCell, _ indexPath: IndexPath) {
 
+    }
+    
+    open func calculateCellHeight(_ indexPath: IndexPath) -> CGFloat? {
+        return nil
     }
 }
 
@@ -109,5 +128,13 @@ extension HLViewModel {
     public func setSections(sections: [SectionModel<String, HLCellType>]) -> Self {
         items.accept(sections)
         return self
+    }
+    
+    public func reloadItemsAtIndexPaths(_ ips: [IndexPath]) {
+        
+        if let vc = viewController as? HLTableViewController {
+            
+            vc.listView.reloadItemsAtIndexPaths(ips, animationStyle: .none)
+        }
     }
 }

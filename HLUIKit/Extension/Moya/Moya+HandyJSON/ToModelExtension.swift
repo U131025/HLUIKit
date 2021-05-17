@@ -10,7 +10,7 @@ import Foundation
 import RxSwift
 import Moya
 import HandyJSON
-import BuglyHotfix
+//import BuglyHotfix
 
 class BaseModel: NSObject, HandyJSON {
     required override init() {}
@@ -42,7 +42,7 @@ extension ObservableType where Element == Response {
     }
 }
 
-extension Response {
+public extension Response {
 
     func mapModel<T: HandyJSON>(_ type: T.Type, _ handleError: Bool) -> T {
 
@@ -80,7 +80,7 @@ extension ObservableType where Element == Any {
 
 }
 
-extension String {
+public extension String {
 
     func mapModel<T: HandyJSON>(_ type: T.Type) -> Observable<T> {
 
@@ -90,5 +90,9 @@ extension String {
             return Observable.just(model)
         }
         return Observable.error(RxError.noElements)
+    }
+    
+    func mapToModel<T: HandyJSON>(_ type: T.Type) -> T? {
+        return JSONDeserializer<T>.deserializeFrom(json: self)
     }
 }

@@ -46,7 +46,7 @@ class ErrorCodePlugin: PluginType {
 //        case 8:
 //            // 异地登录, 未登录等状态
 //            ConfigManger.shared.setAccount(nil)
-//            DefaultWireframe.shared.showMessageJuhua(message: "登录过期，请重新登录")
+//            SVProgressHUD.showInfo(withStatus: "登录过期，请重新登录")
 //        default:
 //            break
 //        }

@@ -104,9 +104,14 @@ public enum Validate {
 
     /// 输入规则
     public var isRight: Bool {
+        
+        if case .purInt(let string) = self {
+            let scan: Scanner = Scanner(string: string)
+            var val:Int = 0
+            return scan.scanInt(&val) && scan.isAtEnd
+        }
 
         let (predicateStr, currObject) = createRule()
-
         let predicate =  NSPredicate(format: "SELF MATCHES %@", predicateStr)
         return predicate.evaluate(with: currObject)
     }

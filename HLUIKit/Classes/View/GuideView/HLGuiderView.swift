@@ -13,15 +13,21 @@ import RxSwift
 import SnapKit
 import SDCycleScrollView
 
-public struct GuiderConfig {
+public struct HLGuiderConfig {
     public var image: UIImage?
     public var title: String?
     public var subTitle: String?
+    
+    public init(image: UIImage? = nil, title: String? = nil, subTitle: String? = nil) {
+        self.image = image
+        self.title = title
+        self.subTitle = subTitle
+    }
 }
 
-public class GuiderView: HLPopView {
+public class HLGuiderView: HLPopView {
     
-    public static let shared = GuiderView(identify: "GuiderView")
+    public static let shared = HLGuiderView(identify: "GuiderView")
 
     public let scrollView = UIScrollView().then { (scrollView) in
         scrollView.isPagingEnabled = true
@@ -62,7 +68,7 @@ public class GuiderView: HLPopView {
         }
     }
     
-    open func addGuideView(config: GuiderConfig, isEnd: Bool = false) -> Self {
+    open func addGuideView(config: HLGuiderConfig, isEnd: Bool = false) -> Self {
         
         let view = HLGuiderItemView().setConfig(config)
         

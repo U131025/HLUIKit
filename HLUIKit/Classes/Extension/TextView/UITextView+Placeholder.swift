@@ -24,7 +24,7 @@ extension UITextView {
         super.layoutSubviews()
 
         let placeholderSize = self.placeholderLabel?.sizeThatFits(CGSize(width: self.bounds.width - 10, height: 0))
-        self.placeholderLabel?.frame = CGRect(x: 5, y: 5, width: (placeholderSize?.width) ?? 0, height: (placeholderSize?.height) ?? 0)
+        self.placeholderLabel?.frame = CGRect(x: 8, y: 8, width: bounds.width - 8, height: (placeholderSize?.height) ?? 0)
 
         self.wordLimitLabel?.bounds = CGRect(x: 0, y: 0, width: self.bounds.width - 10, height: (placeholderSize?.height) ?? 0)
         self.wordLimitLabel?.left = 5
@@ -127,8 +127,9 @@ extension UITextView {
             }
 
             let rs = UILabel()
-
-            rs.font = UIFont.systemFont(ofSize: 15.0)
+            rs.frame = bounds
+            rs.font = font ?? UIFont.systemFont(ofSize: 15.0)
+            rs.textAlignment =  textAlignment
             rs.textColor = UIColor.lightGray
             rs.numberOfLines = 0
             self.addSubview(rs)

@@ -18,7 +18,7 @@ public typealias HLItemSelectedIndexPathBlock = (IndexPath) -> Void
 
 public typealias HLCollectionViewSizeInSectionConfigBlock = (Int) -> CGSize
 
-public typealias HLCollectionCellConfigBlock = (HLCollectionViewCell) -> Void
+public typealias HLCollectionCellConfigBlock = (HLCollectionViewCell, IndexPath) -> Void
 
 open class HLCollectionView: HLView, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate {
 
@@ -35,6 +35,8 @@ open class HLCollectionView: HLView, UICollectionViewDelegateFlowLayout, UIColle
     fileprivate var cellConfigBlock: HLCollectionCellConfigBlock?
     fileprivate var itemSelectedBlock: HLItemSelectedBlock?
     fileprivate var itemSelectedIndexPathBlock: HLItemSelectedIndexPathBlock?
+    
+    fileprivate var itemDeselectedIndexPathBlock: HLItemSelectedIndexPathBlock?
 
     // section header/footer config
     var headerHeightInSectionBlock: HLCollectionViewSizeInSectionConfigBlock?
@@ -62,14 +64,14 @@ open class HLCollectionView: HLView, UICollectionViewDelegateFlowLayout, UIColle
     // MARK: DataSource
     lazy public var dataSource: RxCollectionViewSectionedReloadDataSource<SectionModel<String, HLCellType>> = {
 
-        return HLCollectioViewDataSource.generateDataSource(style: self.style, eventBlock: { (cell) in
+        return HLCollectioViewDataSource.generateDataSource(style: self.style, eventBlock: { (cell, indexPath) in
 
             cell.cellEvent
                 .subscribe(onNext: {[unowned self] (info) in
                     self.cellEvent.onNext(info)
                 }).disposed(by: cell.disposeBag)
 
-            self.cellConfigBlock?(cell)
+            self.cellConfigBlock?(cell, indexPath)
         })
     }()
 
@@ -91,7 +93,7 @@ open class HLCollectionView: HLView, UICollectionViewDelegateFlowLayout, UIColle
             })
             .takeUntil(self.rx.deallocated)
             .bind(to: collectionView.rx.items(dataSource: self.dataSource))
-
+        
 //        _ = collectionView.rx
 //            .modelSelected(RxBaseCellType.self)
 //            .takeUntil(self.rx.deallocated)
@@ -108,6 +110,13 @@ open class HLCollectionView: HLView, UICollectionViewDelegateFlowLayout, UIColle
                 self.itemSelectedBlock?(type)
 
                 self.itemSelectedIndexPathBlock?(indexPath)
+            })
+        
+        _ = collectionView.rx
+            .itemDeselected
+            .takeUntil(self.rx.deallocated)
+            .subscribe(onNext: {[unowned self] (indexPath) in
+                self.itemDeselectedIndexPathBlock?(indexPath)
             })
 
         _ = collectionView.rx.setDelegate(self)
@@ -128,7 +137,9 @@ open class HLCollectionView: HLView, UICollectionViewDelegateFlowLayout, UIColle
 
         return CGSize.zero
     }
-
+    
+    
+    
     // MARK: UICollectionViewDelegate
 //    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
 //        return headerHeightInSectionBlock?(section) ?? CGSize(width: kScreenW, height: 0.001)
@@ -241,6 +252,11 @@ extension HLCollectionView {
 
     public func selectedIndexPathAction(action: HLItemSelectedIndexPathBlock?) -> Self {
         self.itemSelectedIndexPathBlock = action
+        return self
+    }
+    
+    public func deselectedIndexPathAction(action: HLItemSelectedIndexPathBlock?) -> Self {
+        self.itemDeselectedIndexPathBlock = action
         return self
     }
 

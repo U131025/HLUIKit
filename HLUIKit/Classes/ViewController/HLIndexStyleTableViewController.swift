@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 import MYTableViewIndex
 
-open class RxIndexStyleTableViewController: HLTableViewController {
+open class HLIndexStyleTableViewController: HLTableViewController {
 
     /// 索引
     public var tableViewIndexController: TableViewIndexController!
@@ -28,7 +28,7 @@ open class RxIndexStyleTableViewController: HLTableViewController {
 
     open func initIndexConfig() {
         /// 索引
-        tableViewIndexController = TableViewIndexController(scrollView: listView.tableView)
+        tableViewIndexController = TableViewIndexController(scrollView: listView)
         tableViewIndexController.tableViewIndex.delegate = self
 
         /// 索引数据源
@@ -49,7 +49,7 @@ open class RxIndexStyleTableViewController: HLTableViewController {
 
 }
 
-extension RxIndexStyleTableViewController: TableViewIndexDelegate {
+extension HLIndexStyleTableViewController: TableViewIndexDelegate {
 
     // MARK: - UIScrollView
 
@@ -61,9 +61,9 @@ extension RxIndexStyleTableViewController: TableViewIndexDelegate {
     fileprivate func updateHighlightedItems() {
         let frame = uncoveredTableViewFrame()
         var visibleSections = Set<Int>()
-        for section in 0..<listView.tableView.numberOfSections {
-            if frame.intersects(listView.tableView.rect(forSection: section)) ||
-                frame.intersects(listView.tableView.rectForHeader(inSection: section)) {
+        for section in 0..<listView.numberOfSections {
+            if frame.intersects(listView.rect(forSection: section)) ||
+                frame.intersects(listView.rectForHeader(inSection: section)) {
                 visibleSections.insert(section)
                 break
             }
@@ -89,14 +89,14 @@ extension RxIndexStyleTableViewController: TableViewIndexDelegate {
 
     // MARK: - Helpers
     fileprivate func uncoveredTableViewFrame() -> CGRect {
-        return CGRect(x: listView.tableView.bounds.origin.x, y: listView.tableView.bounds.origin.y + topLayoutGuide.length,
-                      width: listView.tableView.bounds.width, height: listView.tableView.bounds.height - topLayoutGuide.length)
+        return CGRect(x: listView.bounds.origin.x, y: listView.bounds.origin.y + topLayoutGuide.length,
+                      width: listView.bounds.width, height: listView.bounds.height - topLayoutGuide.length)
     }
 
     // MARK: - TableViewIndex
     public func tableViewIndex(_ tableViewIndex: TableViewIndex, didSelect item: UIView, at index: Int) -> Bool {
 
-        let originalOffset = listView.tableView.contentOffset
+        let originalOffset = listView.contentOffset
 
         let sectionIndex = mapIndexItemToSection(item, index: index)
         if sectionIndex != NSNotFound {
@@ -106,14 +106,14 @@ extension RxIndexStyleTableViewController: TableViewIndexDelegate {
             }
             item.setHightlightStyle(true)
 
-            let rowCount = listView.tableView.numberOfRows(inSection: sectionIndex)
+            let rowCount = listView.numberOfRows(inSection: sectionIndex)
             let indexPath = IndexPath(row: rowCount > 0 ? 0 : NSNotFound, section: sectionIndex)
-            listView.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
+            listView.scrollToRow(at: indexPath, at: .top, animated: false)
         } else {
-            listView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+            listView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
         }
 
-        return listView.tableView.contentOffset != originalOffset
+        return listView.contentOffset != originalOffset
     }
 
     ///

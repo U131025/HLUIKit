@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension UIView {
+public extension UIView {
 
     var left: CGFloat {
         get {

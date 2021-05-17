@@ -35,19 +35,19 @@ open class DefaultTextTableViewCell: HLTableViewCell {
 
         backgroundColor = .white
 
-        addSubview(leftLabel)
-        addSubview(rightLabel)
+        contentView.addSubview(leftLabel)
+        contentView.addSubview(rightLabel)
 
         leftLabel.snp.makeConstraints { (make) in
-            make.left.equalTo(15)
+            make.left.equalTo(HLTableViewCell.defaultCellMarginValue)
             make.top.bottom.equalToSuperview()
-            make.width.equalTo(100)
+            make.width.equalTo(kScreenW - (HLTableViewCell.defaultCellMarginValue * 2))
         }
 
         rightLabel.snp.makeConstraints { (make) in
             make.left.equalTo(leftLabel.snp.right).offset(10)
             make.top.bottom.equalToSuperview()
-            make.right.equalTo(-15)
+            make.right.equalTo(-HLTableViewCell.defaultCellMarginValue)
         }
     }
 
@@ -64,20 +64,23 @@ open class DefaultTextTableViewCell: HLTableViewCell {
             rightLabel.text = detail
 
         } else if let (titileConfig, detailConfig) = data as? (TextCellConfig, TextCellConfig?) {
-
-            leftLabel.text = titileConfig.text
+            tag = titileConfig.tag
+            
             leftLabel.textColor = titileConfig.textColor
             leftLabel.font = titileConfig.font
-            leftLabel.sizeToFit()
+            
+            if let text = titileConfig.text, text.count > 0 {
+                leftLabel.text = text
+                let size = leftLabel.sizeThatFits(CGSize(width: kScreenW, height: 40))
+                let maxWidth = kScreenW - HLTableViewCell.defaultCellMarginValue*2 - 80
+                var width = size.width
+                if width > maxWidth {
+                    width = maxWidth
+                }
 
-            let maxWidth = kScreenW - 30 - 80
-            var width = leftLabel.width
-            if width > maxWidth {
-                width = maxWidth
-            }
-
-            leftLabel.snp.updateConstraints { (make) in
-                make.width.equalTo(leftLabel.width)
+                leftLabel.snp.updateConstraints { (make) in
+                    make.width.equalTo(size.width)
+                }
             }
 
             rightLabel.text = detailConfig?.text
@@ -85,7 +88,7 @@ open class DefaultTextTableViewCell: HLTableViewCell {
             rightLabel.font = detailConfig?.font
 
         } else if let config = data as? TextCellConfig {
-
+            tag = config.tag
             leftLabel.text = config.text
             leftLabel.textColor = config.textColor
             leftLabel.font = config.font
@@ -102,7 +105,7 @@ extension DefaultTextTableViewCell {
         accessoryView = UIImageView(image: image)
 
         rightLabel.snp.updateConstraints { (make) in
-            make.right.equalTo(-35)
+            make.right.equalTo(-5)
         }
 
     }
