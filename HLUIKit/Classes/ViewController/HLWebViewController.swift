@@ -13,7 +13,7 @@ import WebKit
 
 open class HLWebViewController: HLViewController {
 
-    public let webView = WKWebView()
+    public var webView = WKWebView()
 
     override open func viewDidLoad() {
         super.viewDidLoad()
@@ -23,7 +23,7 @@ open class HLWebViewController: HLViewController {
 //        webView.scalesPageToFit = true
         webView.navigationDelegate = self
         webView.backgroundColor = .white
-
+        
         view.addSubview(webView)
         webView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
@@ -67,17 +67,17 @@ open class HLWebViewController: HLViewController {
 
 extension HLWebViewController: WKNavigationDelegate {
 
-    public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+    open func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         NSLog("开始加载网页")
         DefaultWireframe.shared.showWaitingJuhua(message: nil, in: self.view)
     }
 
-    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    open func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         NSLog("网页加载完毕")
         DefaultWireframe.shared.dismissJuhua()
     }
 
-    public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+    open func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         NSLog("网页加载失败: \(error)")
         DefaultWireframe.shared.showMessageJuhua(message: "网页加载失败")
     }

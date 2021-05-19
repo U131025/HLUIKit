@@ -51,11 +51,15 @@ open class HLViewModel {
     open func initConfig() {
 
     }
+    
+    open func release() {
+        disposeBag = DisposeBag()
+        self.viewController = nil
+    }
 
     /// 释放
     deinit {
-        disposeBag = DisposeBag()
-        self.viewController = nil
+        self.release()
     }
 
     /// 自定义事件绑定
@@ -71,6 +75,10 @@ open class HLViewModel {
 
     /// 选中处理
     open func itemSelected(_ type: HLCellType) {
+
+    }
+    
+    open func itemDeselected(_ indexPath: IndexPath) {
 
     }
 
@@ -99,6 +107,15 @@ open class HLViewModel {
     open func cellConfig(_ cell: HLTableViewCell, _ indexPath: IndexPath) {
       
     }
+    
+    /// cell内部控件绑定扩展
+    open func cellControlBindConfig(_ cell: HLCollectionViewCell, _ indexPath: IndexPath) {
+
+    }
+    
+    open func calculateCellHeight(_ indexPath: IndexPath) -> CGFloat? {
+        return nil
+    }
 }
 
 extension HLViewModel {
@@ -111,5 +128,13 @@ extension HLViewModel {
     public func setSections(sections: [SectionModel<String, HLCellType>]) -> Self {
         items.accept(sections)
         return self
+    }
+    
+    public func reloadItemsAtIndexPaths(_ ips: [IndexPath]) {
+        
+        if let vc = viewController as? HLTableViewController {
+            
+            vc.listView.reloadItemsAtIndexPaths(ips, animationStyle: .none)
+        }
     }
 }

@@ -26,6 +26,12 @@ open class HLCollectionViewController: HLViewController {
         .selectedAction(action: {[weak self] (type) in
             self?.itemSelected(type)
         })
+        .selectedIndexPathAction(action: {[weak self] (indexPath) in
+            self?.itemSelected(indexPath)
+        })
+        .deselectedIndexPathAction(action: {[weak self] (indexPath) in
+            self?.itemDeselected(indexPath)
+        })
         .build()
 
     /// 布局
@@ -75,13 +81,20 @@ open class HLCollectionViewController: HLViewController {
 
     /// cell内部控件绑定扩展
     open func cellControlBindConfig(_ cell: HLCollectionViewCell, _ indexPath: IndexPath) {
-
+        self.viewModel?.cellControlBindConfig(cell, indexPath)
     }
 
     /// 选中事件
     open func itemSelected(_ type: HLCellType) {
         self.viewModel?.itemSelected(type)
-        print("==== \(type)")
+    }
+    
+    open func itemSelected(_ indexPath: IndexPath) {
+        self.viewModel?.itemSelected(indexPath: indexPath)
+    }
+    
+    open func itemDeselected(_ indexPath: IndexPath) {
+        self.viewModel?.itemDeselected(indexPath)
     }
 
     override open func reloadData() {

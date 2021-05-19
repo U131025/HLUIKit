@@ -71,16 +71,15 @@ open class DefaultTextTableViewCell: HLTableViewCell {
             
             if let text = titileConfig.text, text.count > 0 {
                 leftLabel.text = text
-                leftLabel.sizeToFit()
-                
+                let size = leftLabel.sizeThatFits(CGSize(width: kScreenW, height: 40))
                 let maxWidth = kScreenW - HLTableViewCell.defaultCellMarginValue*2 - 80
-                var width = leftLabel.width
+                var width = size.width
                 if width > maxWidth {
                     width = maxWidth
                 }
 
                 leftLabel.snp.updateConstraints { (make) in
-                    make.width.equalTo(leftLabel.width)
+                    make.width.equalTo(size.width)
                 }
             }
 
