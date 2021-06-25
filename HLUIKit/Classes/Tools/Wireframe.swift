@@ -34,6 +34,21 @@ open class DefaultWireframe: NSObject, Wireframe {
     public let juhua = JGProgressHUD.init(style: .dark)
     public var disposeBag = DisposeBag()
     
+    public func getKeyWindow() -> UIWindow? {
+        var window: UIWindow? = nil
+        if #available(iOS 13.0, *) {
+            for windowScene: UIWindowScene in ((UIApplication.shared.connectedScenes as? Set<UIWindowScene>)!) {
+                if windowScene.activationState == .foregroundActive {
+                    window = windowScene.windows.first
+                    break
+                }
+            }
+            return window
+        } else {
+            return UIApplication.shared.keyWindow
+        }
+    }
+    
     public func open(urls: [URL?]) {
         for url in urls {
             if open(url: url) == true {
@@ -70,9 +85,9 @@ open class DefaultWireframe: NSObject, Wireframe {
     }
 
     #if os(iOS)
-    private static func rootViewController() -> UIViewController {
+    private static func rootViewController() -> UIViewController? {
         // cheating, I know
-        return UIApplication.shared.keyWindow!.rootViewController!
+        return UIApplication.shared.keyWindow?.rootViewController
     }
     #endif
 
@@ -81,7 +96,7 @@ open class DefaultWireframe: NSObject, Wireframe {
             let alertView = UIAlertController(title: title, message: message, preferredStyle: .alert)
             alertView.addAction(UIAlertAction(title: localizedString("确定"), style: .cancel) { _ in
             })
-            rootViewController().present(alertView, animated: true, completion: nil)
+            rootViewController()?.present(alertView, animated: true, completion: nil)
         #endif
     }
 
@@ -99,7 +114,7 @@ open class DefaultWireframe: NSObject, Wireframe {
                 })
             }
 
-            DefaultWireframe.rootViewController().present(alertView, animated: true, completion: nil)
+            DefaultWireframe.rootViewController()?.present(alertView, animated: true, completion: nil)
 
             return Disposables.create {
                 alertView.dismiss(animated: false, completion: nil)
@@ -119,13 +134,15 @@ extension DefaultWireframe {
 
         dismissJuhua()
         DispatchQueue.main.async {
-            let window: UIWindow = ((UIApplication.shared.delegate?.window)!)!
+            guard let window = view ?? self.getKeyWindow() else {
+                return
+            }
 
             let juhua = JGProgressHUD.init(style: .dark)
             juhua.interactionType = .blockNoTouches
             juhua.indicatorView = nil
             juhua.textLabel.text = message ?? ""
-            juhua.show(in: view ?? window)
+            juhua.show(in: window)
             juhua.dismiss(afterDelay: hideAfter)
 
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+hideAfter, execute: {
@@ -138,7 +155,9 @@ extension DefaultWireframe {
 
         dismissJuhua()
         DispatchQueue.main.async {
-            let window: UIWindow = ((UIApplication.shared.delegate?.window)!)!
+            guard let window: UIWindow = self.getKeyWindow() else {
+                return
+            }
 
             let juhua = JGProgressHUD.init(style: style)
             juhua.interactionType = .blockNoTouches
@@ -158,7 +177,9 @@ extension DefaultWireframe {
 
         dismissJuhua()
         DispatchQueue.main.async {
-            let window: UIWindow = ((UIApplication.shared.delegate?.window)!)!
+            guard let window: UIWindow = self.getKeyWindow() else {
+                return
+            }
 
             let juhua = JGProgressHUD.init(style: .dark)
             juhua.interactionType = .blockNoTouches
@@ -173,7 +194,9 @@ extension DefaultWireframe {
 
         dismissJuhua()
         DispatchQueue.main.async {
-            let window: UIWindow = ((UIApplication.shared.delegate?.window)!)!
+            guard let window: UIWindow = self.getKeyWindow() else {
+                return
+            }
 
             let juhua = JGProgressHUD.init(style: .dark)
             juhua.interactionType = .blockNoTouches
@@ -193,12 +216,14 @@ extension DefaultWireframe {
                 return
             }
             
-            let window: UIWindow = ((UIApplication.shared.delegate?.window)!)!
+            guard let window = view ?? self.getKeyWindow() else {
+                return
+            }
             self.juhua.indicatorView = JGProgressHUDIndeterminateIndicatorView.init()
             self.juhua.interactionType = .blockAllTouches
 
             self.juhua.textLabel.text = message ?? ""
-            self.juhua.show(in: view ?? window)
+            self.juhua.show(in: window)
         }
     }
 

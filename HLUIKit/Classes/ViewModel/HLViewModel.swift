@@ -30,7 +30,7 @@ open class HLViewModel {
     }
     /// 页面和页面大小
     public var page: Int = 1
-    public let pageSize: Int = 20
+    public var pageSize: Int = 20
 
     public var disposeBag = DisposeBag()
     public var disposable: Disposable?
@@ -95,7 +95,25 @@ open class HLViewModel {
     }
 
     open func refresh(type: HLRefreshType) {
-
+        self.refreshType = type
+    }
+    
+    /// 预加载处理
+    public lazy var isLoadFinish: Bool = false {
+        didSet {
+            if isLoadFinish == true {
+                if let vc = viewController as? HLTableViewController {
+                    vc.listView.mj_footer?.endRefreshingWithNoMoreData()
+                }
+                if let vc = viewController as? HLCollectionViewController {
+                    vc.listView.collectionView.mj_footer?.endRefreshingWithNoMoreData()
+                }
+            }
+        }
+    }
+    
+    open func preload(indexPath: IndexPath) {
+        
     }
 
     /// 绑定处理

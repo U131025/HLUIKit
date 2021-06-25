@@ -27,6 +27,7 @@ public typealias HLTableViewEditingStyleConfigBlock = (IndexPath) -> UITableView
 public typealias HLTableViewEditingActionsConfigBlock = (IndexPath) -> [UITableViewRowAction]?
 
 public typealias HLCellCalculateHeightBlock = (IndexPath) -> CGFloat?
+public typealias HLPreloadConfigBlock = (IndexPath) -> Void
 
 open class HLTableView: UITableView, UITableViewDelegate {
 
@@ -48,6 +49,8 @@ open class HLTableView: UITableView, UITableViewDelegate {
     var editingActionsBlock: HLTableViewEditingActionsConfigBlock?
     /// 自定义计算Cell高度
     var calculateCellHeightBlock: HLCellCalculateHeightBlock?
+    /// 预加载
+    var preloadBlock: HLPreloadConfigBlock?
     
     public var disposeBag = DisposeBag()
     
@@ -251,6 +254,12 @@ open class HLTableView: UITableView, UITableViewDelegate {
     public func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return self.footerHeightInSectionBlock?(section) ?? 0.01
     }
+    
+    /// MARK: 预加载
+    public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        preloadBlock?(indexPath)
+    }
 
     // 编辑状态单选多选设置
     public func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
@@ -329,6 +338,12 @@ extension HLTableView {
     public func setLoardMoreFooter(block: CompleteBlock?, config: TextCellConfig? = nil) -> Self {
 
         self.mj_footer = loadMoreFooter(block: block, config: config)
+        return self
+    }
+    
+    /// 预加载设置
+    public func setPreloadConfig(block: HLPreloadConfigBlock?) -> Self {
+        self.preloadBlock = block
         return self
     }
 

@@ -16,7 +16,11 @@ let realmIdentifier = "MyInMemoryRealm"
 public class RealmHelper {
     
     /* Realm 数据库配置，用于数据库的迭代更新 */
-    public static var schemaVersion: UInt64 = 1
+    public static var schemaVersion: UInt64 = 1 {
+        didSet {
+            configRealm(version: schemaVersion)
+        }
+    }
 
     public enum RealmNofityType {
         case initial
@@ -24,27 +28,24 @@ public class RealmHelper {
     }
 
     /// 配置数据库
-    public class func configRealm() {
+    public class func configRealm(version: UInt64 = 0) {
 
         /* Realm 数据库配置，用于数据库的迭代更新 */
-//        let schemaVersion: UInt64 = 2
-
-        let config = Realm.Configuration(schemaVersion: RealmHelper.schemaVersion, migrationBlock: { _, oldSchemaVersion in
+        let config = Realm.Configuration(schemaVersion: version, migrationBlock: { _, oldSchemaVersion in
 
             /* 什么都不要做！Realm 会自行检测新增和需要移除的属性，然后自动更新硬盘上的数据库架构 */
-            if oldSchemaVersion < RealmHelper.schemaVersion {}
+            if oldSchemaVersion < version {}
         })
                 
         Realm.Configuration.defaultConfiguration = config
-        Realm.asyncOpen { (realm, error) in
-
-            /* Realm 成功打开，迁移已在后台线程中完成 */
-            if realm != nil {
-                print("Realm 数据库配置成功")
-            } else if let error = error {
-                print("Realm 数据库配置失败：\(error.localizedDescription)")
+        Realm.asyncOpen { (result) in
+            switch result {
+            case .success(_):
+                print("🍡Realm 数据库配置成功")
+            case .failure(let error):
+                print("🍡Realm 数据库配置失败：\(error.localizedDescription)")
             }
-        }
+        }  
     }
 
     public class func queryFirst<Element: Object>(_ type: Element.Type, predicate: NSPredicate? = nil, identifier: String? = nil) -> Element? {

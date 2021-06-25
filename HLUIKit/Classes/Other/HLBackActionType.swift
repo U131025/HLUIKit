@@ -46,9 +46,30 @@ extension UIViewController {
     }
 
     public func setNavRightItem(_ button: UIButton) -> Observable<()> {
-
         self.navigationItem.rightBarButtonItem = UIBarButtonItem.init(customView: button)
-
         return button.rx.tap.asObservable()
+    }
+    
+    public func setNavRightItems(_ buttons: [UIButton]) -> Observable<Int> {
+        
+        var items = [UIBarButtonItem]()
+        for btn in buttons {
+            items.append(UIBarButtonItem.init(customView: btn))
+        }
+        
+        self.navigationItem.rightBarButtonItems = items
+        return Observable.create { (obs) -> Disposable in
+            
+            var disArray = [Disposable]()
+            for (index, btn) in buttons.enumerated() {
+                let dis = btn.rx.tap
+                    .subscribe(onNext: { (_) in
+                        obs.onNext(index)
+                    })
+                disArray.append(dis)
+            }
+            
+            return Disposables.create(disArray)
+        }
     }
 }

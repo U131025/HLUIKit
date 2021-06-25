@@ -254,7 +254,7 @@ public class HLBluetoothKitService {
         peripheralCharacteristics[peripheral] = nil
     }
 
-    public func autoConnected(_ peripheral: Peripheral) {
+    public func setAutoConnected(_ peripheral: Peripheral) {
 
         disconnectionSubject
             .subscribe(onNext: {[weak self] (result) in
@@ -273,6 +273,10 @@ public class HLBluetoothKitService {
                 }
 
             }).disposed(by: autoDisposeBag)
+    }
+    
+    public func cancelAutoConnect() {
+        autoDisposeBag = DisposeBag()
     }
 
     // 监听断开连接状态
@@ -383,7 +387,37 @@ extension HLBluetoothKitService {
 
         return self
     }
-
+    
+    /// 分包发送
+    public func sendBySplit(data: NSData, for peripheral: Peripheral) {
+        
+        guard let config = peripheralCharacteristics[peripheral],
+              let chr = config.writeChr else {
+            return
+        }
+        
+        /// 分包发送20一包
+        let sendLen = data.length > 20 ? 20 : data.length
+        if data.length > sendLen {
+            
+            let senddata = data.subdata(with: NSRange.init(location: 0, length: sendLen))
+            let lastdata = data.subdata(with: NSRange.init(location: sendLen, length: data.length - sendLen))
+            
+            self.sendQueue.addOperation {
+                let tempData: Data = senddata as Data
+                self.writeValueTo(characteristic: chr, data: tempData)
+                Thread.sleep(forTimeInterval: 0.1)
+            }       
+            self.sendBySplit(data: lastdata as NSData, for: peripheral)
+            
+        } else {
+            self.sendQueue.addOperation {
+                let tempData: Data = data as Data
+                self.writeValueTo(characteristic: chr, data: tempData)
+                Thread.sleep(forTimeInterval: 0.1)
+            }
+        }
+    }
 }
 
 public enum RxBluetoothServiceError: Error {

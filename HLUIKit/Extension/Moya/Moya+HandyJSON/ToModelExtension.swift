@@ -10,10 +10,28 @@ import Foundation
 import RxSwift
 import Moya
 import HandyJSON
-//import BuglyHotfix
 
-class BaseModel: NSObject, HandyJSON {
-    required override init() {}
+open class HLBaseModel: NSObject, HandyJSON {
+    public static var isMapping: Bool = false
+    
+    required public override init() {}
+    
+    open func mapping(mapper: HelpingMapper) {
+        //        mapper <<< self.des <-- "description"
+    }
+    
+    public func toJsonWithMapping() -> [String : Any] {
+        HLBaseModel.isMapping = true
+        let result = toJSON() ?? [:]
+        HLBaseModel.isMapping = false
+        return result
+    }
+    
+    public func copy(with model: HLBaseModel) {
+        var obj = self
+        let json = model.toJSON()
+        JSONDeserializer.update(object: &obj, from: json)
+    }
 }
 
 extension ObservableType where Element: TargetType {
@@ -48,7 +66,7 @@ public extension Response {
 
         let jsonString = String.init(data: data, encoding: .utf8)
 
-        guard JSONDeserializer<BaseModel>.deserializeFrom(json: jsonString) != nil  else {
+        guard JSONDeserializer<HLBaseModel>.deserializeFrom(json: jsonString) != nil  else {
             return T()
         }
 

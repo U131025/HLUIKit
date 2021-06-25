@@ -37,6 +37,7 @@ open class HLCollectionView: HLView, UICollectionViewDelegateFlowLayout, UIColle
     fileprivate var itemSelectedIndexPathBlock: HLItemSelectedIndexPathBlock?
     
     fileprivate var itemDeselectedIndexPathBlock: HLItemSelectedIndexPathBlock?
+    fileprivate var preloadBlock: HLPreloadConfigBlock?
 
     // section header/footer config
     var headerHeightInSectionBlock: HLCollectionViewSizeInSectionConfigBlock?
@@ -120,7 +121,6 @@ open class HLCollectionView: HLView, UICollectionViewDelegateFlowLayout, UIColle
             })
 
         _ = collectionView.rx.setDelegate(self)
-
     }
 
     /// 尺寸设置
@@ -137,7 +137,10 @@ open class HLCollectionView: HLView, UICollectionViewDelegateFlowLayout, UIColle
 
         return CGSize.zero
     }
-    
+    /// 预加载
+    public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        preloadBlock?(indexPath)
+    }
     
     
     // MARK: UICollectionViewDelegate
@@ -259,7 +262,7 @@ extension HLCollectionView {
         self.itemDeselectedIndexPathBlock = action
         return self
     }
-
+    
     public func build() -> Self {
 
         addSubview(collectionView)
@@ -277,6 +280,12 @@ extension HLCollectionView {
     func endRefreshing() {
         self.collectionView.mj_header?.endRefreshing()
         self.collectionView.mj_footer?.endRefreshing()
+    }
+    
+    /// 预加载设置
+    public func setPreloadConfig(block: HLPreloadConfigBlock?) -> Self {
+        self.preloadBlock = block
+        return self
     }
 
     /// 设置刷新头部

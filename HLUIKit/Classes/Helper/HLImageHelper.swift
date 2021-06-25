@@ -32,10 +32,10 @@ public class HLImageHelper: NSObject {
         }
         
         // 接口最大接受大小
-        while (sizeOriginKB > maxSize) && (resizeRate > 0.1) {
+        while (sizeOriginKB > maxSize) && (resizeRate > 0.01) {
+            resizeRate -= 0.2
             imageData = image.jpegData(compressionQuality: CGFloat(resizeRate))!
             sizeOriginKB = Int(CGFloat(imageData.count) / 1024.0)
-            resizeRate -= 0.1
         }
         
         let zipSize = imageData.count/1024 as Int
