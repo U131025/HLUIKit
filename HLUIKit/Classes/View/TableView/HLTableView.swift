@@ -134,7 +134,7 @@ open class HLTableView: UITableView, UITableViewDelegate {
 //            $0.setTitle(LocalizedString(""), for: .idle)
 //            $0.setTitle(LocalizedString("释放即可刷新"), for: .pulling)
 //            $0.setTitle(LocalizedString("正在加载更多数据"), for: .refreshing)
-//            $0.setTitle(LocalizedString("暂无更多数据"), for: .noMoreData)
+            $0.setTitle("暂无更多数据".localized, for: .noMoreData)
 
         }
     }
