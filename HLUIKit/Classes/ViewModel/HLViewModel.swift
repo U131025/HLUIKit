@@ -155,4 +155,8 @@ extension HLViewModel {
             vc.listView.reloadItemsAtIndexPaths(ips, animationStyle: .none)
         }
     }
+    
+    public func getItem(_ indexPath: IndexPath) -> HLCellType? {
+        return items.value[safe: indexPath.section]?.items[safe: indexPath.row]
+    }
 }
