@@ -29,11 +29,7 @@ public protocol HLCellType {
 }
 
 extension HLCellType {
-    
-//    public var classType: AnyClass {
-//        return RxBaseTableViewCell.self
-//    }
-    
+
     public var identifier: String {
         return "\(cellClass)"
     }
