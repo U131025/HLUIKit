@@ -64,7 +64,7 @@ public class HLBluetoothKitService {
     public var autoDisposeBag = DisposeBag()
 
     // MARK: - Public outputs
-    public let bluetoothState = BehaviorRelay<BluetoothState>(value: .unknown)
+    public let bluetoothState = BehaviorRelay<BluetoothState>(value: .poweredOff)
         
     public var scanningOutput: Observable<ScannedPeripheral> {
         return scanningSubject.share(replay: 1, scope: .forever).asObservable()
@@ -324,7 +324,8 @@ public class HLBluetoothKitService {
             self.updatedValueAndNotificationSubject.onNext(HLBluetoothResult.error(RxBluetoothServiceError.redundantStateChange))
         } else {
             let disposable = characteristic.observeValueUpdateAndSetNotification()
-            .subscribe(onNext: { [weak self] (characteristic) in                
+            .subscribe(onNext: { [weak self] (characteristic) in
+                print("\n===== 🚖 ble respond data: \(String(describing: characteristic.value))")
                 self?.updatedValueAndNotificationSubject.onNext(HLBluetoothResult.success(characteristic))
             }, onError: { [weak self] (error) in
                 self?.updatedValueAndNotificationSubject.onNext(HLBluetoothResult.error(error))

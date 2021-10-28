@@ -17,6 +17,8 @@ open class HLTableViewController: HLViewController, UITableViewDelegate {
     
     fileprivate var itemSelectedBlock: HLItemSelectedBlock?
     fileprivate var itemSelectedIndexPathBlock: HLItemSelectedIndexPathBlock?
+    fileprivate var itemDeselectedBlock: HLItemSelectedBlock?
+    fileprivate var itemDeselectedIndexPathBlock: HLItemSelectedIndexPathBlock?
 
     lazy public var listView = HLTableView()
         .setStyle(self.style)
@@ -34,6 +36,12 @@ open class HLTableViewController: HLViewController, UITableViewDelegate {
         })
         .setCalculateCellHeight({ (ip) -> CGFloat? in
             return self.calculateCellHeight(ip)
+        })
+        .deselectedAction(action: {[unowned self] (type) in
+            self.itemDeselected(type)
+        })
+        .deselectedIndexPathAction(action: {[unowned self] (indexPath) in
+            self.itemDeselected(indexPath: indexPath)
         })
         .build()
 
@@ -111,6 +119,16 @@ open class HLTableViewController: HLViewController, UITableViewDelegate {
     open func itemSelected(indexPath: IndexPath) {
         self.viewModel?.itemSelected(indexPath: indexPath)
         self.itemSelectedIndexPathBlock?(indexPath)
+    }
+    
+    open func itemDeselected(_ type: HLCellType) {
+        self.viewModel?.itemDeselected(type: type)
+        self.itemDeselectedBlock?(type)
+    }
+
+    open func itemDeselected(indexPath: IndexPath) {
+        self.viewModel?.itemDeselected(indexPath: indexPath)
+        self.itemDeselectedIndexPathBlock?(indexPath)
     }
 
     /// 无数据界面，需要添加到ViewModel初始化后

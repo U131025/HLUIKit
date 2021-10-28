@@ -37,6 +37,9 @@ open class HLTableView: UITableView, UITableViewDelegate {
 
     var itemSelectedBlock: HLItemSelectedBlock?
     var itemSelectedIndexPathBlock: HLItemSelectedIndexPathBlock?
+    
+    var itemDeselectedBlock: HLItemSelectedBlock?
+    var itemDeselectedIndexPathBlock: HLItemSelectedIndexPathBlock?
 
     var cellConfigBlock: HLTableViewCellConfigBlock?
 
@@ -134,7 +137,7 @@ open class HLTableView: UITableView, UITableViewDelegate {
 //            $0.setTitle(LocalizedString(""), for: .idle)
 //            $0.setTitle(LocalizedString("释放即可刷新"), for: .pulling)
 //            $0.setTitle(LocalizedString("正在加载更多数据"), for: .refreshing)
-            $0.setTitle("暂无更多数据".localized, for: .noMoreData)
+//            $0.setTitle(LocalizedString("暂无更多数据"), for: .noMoreData)
 
         }
     }
@@ -150,9 +153,6 @@ open class HLTableView: UITableView, UITableViewDelegate {
         estimatedSectionHeaderHeight = 0
         estimatedSectionFooterHeight = 0
                
-        if #available(iOS 15, *) {
-            sectionHeaderTopPadding = 0
-        }
     }
 
     open func bindConfig() {
@@ -187,7 +187,16 @@ open class HLTableView: UITableView, UITableViewDelegate {
 
                 self.itemSelectedIndexPathBlock?(indexPath)
             })
+        
+        _ = rx
+            .itemDeselected
+            .takeUntil(self.rx.deallocated)
+            .subscribe(onNext: {[unowned self] (indexPath) in
 
+                let type = self.hlDataSource[indexPath]
+                self.itemDeselectedBlock?(type)
+                self.itemDeselectedIndexPathBlock?(indexPath)
+            })
     }
 
     func endRefreshing() {
@@ -329,6 +338,16 @@ extension HLTableView {
 
     public func selectedIndexPathAction(action: HLItemSelectedIndexPathBlock?) -> Self {
         self.itemSelectedIndexPathBlock = action
+        return self
+    }
+    
+    public func deselectedAction(action: HLItemSelectedBlock?) -> Self {
+        self.itemDeselectedBlock = action
+        return self
+    }
+
+    public func deselectedIndexPathAction(action: HLItemSelectedIndexPathBlock?) -> Self {
+        self.itemDeselectedIndexPathBlock = action
         return self
     }
 

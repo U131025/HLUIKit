@@ -9,9 +9,6 @@
 import Foundation
 
 extension String {
-    /// sdk的命名空间
-    public static var sdkNames: [String] = []
-    
     public func toClass() -> AnyClass? {
         // 1.获取命名空间
         guard let clsName = Bundle.main.infoDictionary!["CFBundleExecutable"] as? String else {
@@ -19,18 +16,16 @@ extension String {
             return nil
         }
         // 2.通过命名空间和类名转换成类
-        var clsNames = [String]()
-        clsNames += String.sdkNames
-        clsNames.append(clsName)
-        clsNames.append("HLUIKit")
-        
-        // 命名空间
-        for clsName in clsNames {
-            if let clsType = NSClassFromString((clsName) + "." + self) {
-                return clsType
+        let cls: AnyClass? = NSClassFromString((clsName) + "." + self)
+        if let clsType = cls {
+            return clsType
+        } else {
+            // HLUIKit命名空间
+            guard let clsType = NSClassFromString("HLUIKit" + "." + self) else {
+                assert(false, "无法通过类名转换成成类: \(self)")
+                return nil
             }
+            return clsType
         }
-        assert(false, "无法通过类名转换成成类: \(self)")
-        return nil
     }
 }

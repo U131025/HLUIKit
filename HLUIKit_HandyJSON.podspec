@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'HLUIKit_HandyJSON'
-  s.version          = '1.0.0'
+  s.version          = '1.0.1'
   s.summary          = '基于RxSwift的界面库'
 
 # This description is used to generate tags and improve search results.
@@ -28,12 +28,12 @@ HLUIKit网络库
   s.source           = { :git => 'https://github.com/U131025/HLUIKit.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.ios.deployment_target = '10.0'
+  s.ios.deployment_target = '12.0'
 
   s.source_files = 'HLUIKit/Extension/Moya/Model+HandyJSON/*'
   s.requires_arc = true
 
   s.dependency 'HandyJSON'
   s.dependency 'RxSwift'
-    
+
 end

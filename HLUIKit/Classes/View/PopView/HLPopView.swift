@@ -17,7 +17,9 @@ open class HLPopView: HLView {
     open var isShow: Bool = false
     open var topWindow: UIView?
     
-    open var isClickBackgoundClose: Bool = false
+    open var isClickBackgoundClose: Bool {
+        return false
+    }
 
     private var identify: String?
 

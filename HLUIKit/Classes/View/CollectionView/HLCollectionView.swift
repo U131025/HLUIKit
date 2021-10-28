@@ -183,11 +183,10 @@ extension HLCollectionView {
     }
 
     public func register(cellTypes: [AnyClass]) -> Self {
-
-        cellTypes.forEach {[unowned self] (type) in
+        cellTypes.forEach { (type) in
             self.collectionView.register(type, forCellWithReuseIdentifier: String(describing: type))
         }
-
+        
         return self
     }
 

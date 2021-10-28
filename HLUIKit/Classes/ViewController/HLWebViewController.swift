@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 import WebKit
 
-open class HLWebViewController: HLViewController {
+open class HLWebViewController: HLViewController, WKUIDelegate {
 
     public var webView = WKWebView()
 
@@ -22,6 +22,7 @@ open class HLWebViewController: HLViewController {
 //        webView.delegate = self
 //        webView.scalesPageToFit = true
         webView.navigationDelegate = self
+        webView.uiDelegate = self
         webView.backgroundColor = .white
         
         view.addSubview(webView)
@@ -80,5 +81,20 @@ extension HLWebViewController: WKNavigationDelegate {
     open func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         NSLog("网页加载失败: \(error)")
         DefaultWireframe.shared.showMessageJuhua(message: "网页加载失败")
+    }
+    
+    open func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        
+        if navigationAction.targetFrame == nil || navigationAction.targetFrame?.isMainFrame != true {
+            webView.load(navigationAction.request)
+        }
+        decisionHandler(.allow)
+    }
+    
+    open func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+        if navigationAction.targetFrame == nil || navigationAction.targetFrame?.isMainFrame != true {
+            webView.load(navigationAction.request)
+        }
+        return nil
     }
 }

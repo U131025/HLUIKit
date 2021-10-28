@@ -76,14 +76,18 @@ open class HLViewModel {
     /// 选中处理
     open func itemSelected(_ type: HLCellType) {
 
-    }
-    
-    open func itemDeselected(_ indexPath: IndexPath) {
-
-    }
-
+    }    
+   
     /// 序列
     open func itemSelected(indexPath: IndexPath) {
+
+    }
+    
+    open func itemDeselected(type: HLCellType) {
+
+    }
+    
+    open func itemDeselected(indexPath: IndexPath) {
 
     }
 
@@ -154,9 +158,5 @@ extension HLViewModel {
             
             vc.listView.reloadItemsAtIndexPaths(ips, animationStyle: .none)
         }
-    }
-    
-    public func getItem(_ indexPath: IndexPath) -> HLCellType? {
-        return items.value[safe: indexPath.section]?.items[safe: indexPath.row]
     }
 }

@@ -8,6 +8,17 @@
 
 import UIKit
 
+public struct IconStyleConfig: HLCellType {
+    public var icon: UIImage?
+    public var backgroundColor: UIColor = .white
+    public var height: CGFloat = 64
+    
+    public init() {}
+    
+    public var cellClass: AnyClass { return IconStyleCollectionViewCell.self }
+    public var cellHeight: CGFloat { return height }
+}
+
 open class IconStyleCollectionViewCell: HLCollectionViewCell {
 
     public let iconImageView = UIImageView().then { (imageView) in
@@ -46,6 +57,10 @@ open class IconStyleCollectionViewCell: HLCollectionViewCell {
             titleLabel.textAlignment = config.textAlignment
             titleLabel.textColor = config.textColor ?? .black
             titleLabel.font = config.font ?? .pingfang(ofSize: 15)
+            
+        } else if let config = data as? IconStyleConfig {
+            iconImageView.image = config.icon
+            backgroundColor = config.backgroundColor
         }
     }
 }

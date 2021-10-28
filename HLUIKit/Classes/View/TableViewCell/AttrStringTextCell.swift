@@ -66,7 +66,7 @@ open class HLAttrStringTextCell: HLTableViewCell {
 }
 
 extension HLAttrStringTextCell {
-    static public func calculateCellHeight(_ data: Any?, _ maxWidth: CGFloat = kScreenW - HLTableViewCell.defaultCellMarginValue*2, minHeight: CGFloat = 44, margin: CGFloat = 20) -> CGFloat {
+    static public func calculateCellHeight(_ data: Any?, _ maxWidth: CGFloat = kScreenW - HLTableViewCell.defaultCellMarginValue*2, minHeight: CGFloat = 44, margin: CGFloat = 0) -> CGFloat {
         if let attrStr = data as? NSAttributedString {
             return calculateAttrStringHeight(attrStr, maxWidth, minHeight: minHeight, margin: margin)
         } else if let config = data as? TextCellConfig {
@@ -78,7 +78,7 @@ extension HLAttrStringTextCell {
         return minHeight
     }
 
-    static public func calculateAttrStringHeight(_ attrStr: NSAttributedString, _ maxWidth: CGFloat = kScreenW - HLTableViewCell.defaultCellMarginValue*2, minHeight: CGFloat = 44, margin: CGFloat = 20) -> CGFloat {
+    static public func calculateAttrStringHeight(_ attrStr: NSAttributedString, _ maxWidth: CGFloat = kScreenW - HLTableViewCell.defaultCellMarginValue*2, minHeight: CGFloat = 44, margin: CGFloat = 0) -> CGFloat {
         let font: UIFont = attrStr.font ?? .pingfang(ofSize: 15)
         let size = (attrStr.string as NSString).boundingRect(with: CGSize(width: Int(maxWidth), height: Int.max), options: NSStringDrawingOptions.usesLineFragmentOrigin, attributes: [NSAttributedString.Key.font: font], context: nil)
         let hieght = size.height + margin

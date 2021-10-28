@@ -94,7 +94,7 @@ open class HLCollectionViewController: HLViewController {
     }
     
     open func itemDeselected(_ indexPath: IndexPath) {
-        self.viewModel?.itemDeselected(indexPath)
+        self.viewModel?.itemDeselected(indexPath: indexPath)
     }
 
     override open func reloadData() {
