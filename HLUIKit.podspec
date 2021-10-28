@@ -28,7 +28,7 @@ Pod::Spec.new do |s|
   s.source           = { :git => 'https://github.com/U131025/HLUIKit.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.ios.deployment_target = '10.0'
+  s.ios.deployment_target = '12.0'
 
   s.source_files = 'HLUIKit/Classes/**/*'
   s.framework    = "UIKit"
@@ -41,7 +41,8 @@ Pod::Spec.new do |s|
   s.dependency 'JGProgressHUD'
 
   s.dependency 'RxDataSources'
-  s.dependency 'RxSwift'
+  s.dependency 'RxSwift', '~> 6.2.0'
+  s.dependency 'RxCocoa', '~> 6.2.0'
   s.dependency 'RxGesture'
   s.dependency 'SDCycleScrollView'
 end

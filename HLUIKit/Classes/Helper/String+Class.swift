@@ -10,7 +10,7 @@ import Foundation
 
 extension String {
     /// sdk的命名空间
-    public static var sdkNameSpaces: [String] = []
+    public static var sdkNames: [String] = []
     
     public func toClass() -> AnyClass? {
         // 1.获取命名空间
@@ -20,7 +20,7 @@ extension String {
         }
         // 2.通过命名空间和类名转换成类
         var clsNames = [String]()
-        clsNames += String.sdkNameSpaces
+        clsNames += String.sdkNames
         clsNames.append(clsName)
         clsNames.append("HLUIKit")
         

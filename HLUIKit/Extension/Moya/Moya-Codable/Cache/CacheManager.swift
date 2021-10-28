@@ -9,7 +9,7 @@ class CacheManager {
 
         do {
 
-            let storage = try Storage(diskConfig: DiskConfig(name: "NetResponseCache"),
+            let storage = try Storage<String, Response>(diskConfig: DiskConfig(name: "NetResponseCache"),
                         memoryConfig: MemoryConfig(),
                         transformer: Transformer<Response>(
                             toData: { $0.data },
@@ -26,7 +26,7 @@ class CacheManager {
 
         do {
 
-            let storage = try Storage(diskConfig: DiskConfig(name: "NetResponseCache"),
+            let storage = try Storage<String, Response>(diskConfig: DiskConfig(name: "NetResponseCache"),
                                       memoryConfig: MemoryConfig(),
                                       transformer: Transformer<Response>(
                                         toData: { $0.data },
@@ -41,7 +41,7 @@ class CacheManager {
     static func object<T: Codable>(ofType type: T.Type, forKey key: String) -> T? {
         do {
 
-            let storage = try Storage(diskConfig: DiskConfig(name: "NetObjectCache"), memoryConfig: MemoryConfig(), transformer: TransformerFactory.forCodable(ofType: type))
+            let storage = try Storage<String, T>(diskConfig: DiskConfig(name: "NetObjectCache"), memoryConfig: MemoryConfig(), transformer: TransformerFactory.forCodable(ofType: type))
             try storage.removeExpiredObjects()
             return (try storage.object(forKey: key))
         } catch {
@@ -54,7 +54,7 @@ class CacheManager {
 
         do {
 
-            let storage = try Storage(diskConfig: DiskConfig(name: "NetCache"), memoryConfig: MemoryConfig(), transformer: TransformerFactory.forCodable(ofType: T.self))
+            let storage = try Storage<String, T>(diskConfig: DiskConfig(name: "NetCache"), memoryConfig: MemoryConfig(), transformer: TransformerFactory.forCodable(ofType: T.self))
             try storage.setObject(object, forKey: forKey)
         } catch {
             print("error\(error)")

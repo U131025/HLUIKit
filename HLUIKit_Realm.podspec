@@ -28,13 +28,13 @@ HLUIKit Realm数据库封装
   s.source           = { :git => 'https://github.com/U131025/HLUIKit.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.ios.deployment_target = '10.0'
+  s.ios.deployment_target = '12.0'
 
   s.source_files = 'HLUIKit/Extension/RealmHelper/**/*'
   s.requires_arc = true
 
   s.dependency 'RealmSwift'
-  s.dependency 'RxSwift'
-  s.dependency 'RxCocoa'
+  s.dependency 'RxSwift', '~> 6.2.0'
+  s.dependency 'RxCocoa', '~> 6.2.0'
 
 end
