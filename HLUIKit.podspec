@@ -33,6 +33,7 @@ Pod::Spec.new do |s|
   s.source_files = 'HLUIKit/Classes/**/*'
   s.framework    = "UIKit"
   s.requires_arc = true
+  s.swift_version = '5.0'
 
   s.dependency 'SnapKit'
   s.dependency 'MYTableViewIndex'
